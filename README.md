@@ -3,11 +3,11 @@
 Projeto Final da disciplina **Tendências em Ciência da Computação** – UNIPÊ
 Professor: **Ricardo Roberto de Lima** | Semestre: 2026 (Outubro – Dezembro)
 
-> 🚧 **Status:** em desenvolvimento – Fase 1 (Proposta e Modelagem)
+>  **Status:** em desenvolvimento – Fase 1 (Proposta e Modelagem)
 
 ---
 
-## 📌 Sobre o projeto
+## Sobre o projeto
 
 Este projeto transforma artigos científicos (2023–2026) sobre **GraphRAG**, **recuperação híbrida** e **Knowledge-Augmented Generation (KAG)** em um **grafo de conhecimento** no Neo4j.
 
@@ -21,7 +21,7 @@ O objetivo é **reduzir alucinações** e deixar as respostas **rastreáveis**.
 
 ---
 
-## 👥 Equipe
+## Equipe
 
 | Integrante | Função principal |
 |---|---|
@@ -34,17 +34,17 @@ O objetivo é **reduzir alucinações** e deixar as respostas **rastreáveis**.
 
 ---
 
-## 🏗️ Arquitetura (visão geral)
+## Arquitetura (visão geral)
 
 ```
-📄 Papers  →  1. Extração (NER/RE)  →  2. Grafo no Neo4j
+Papers  →  1. Extração (NER/RE)  →  2. Grafo no Neo4j
                                               ↓
           4. Interface (Streamlit)  ←  3. Busca híbrida + LLM
 ```
 
 ---
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 - **Python** – linguagem principal
 - **Neo4j** (Desktop ou Aura Free) – banco de dados de grafos
@@ -55,7 +55,7 @@ O objetivo é **reduzir alucinações** e deixar as respostas **rastreáveis**.
 
 ---
 
-## 📁 Estrutura do repositório (planejada)
+## Estrutura do repositório (planejada)
 
 ```
 ├── data/          # Papers coletados (JSON, PDFs, abstracts)
@@ -69,7 +69,7 @@ O objetivo é **reduzir alucinações** e deixar as respostas **rastreáveis**.
 
 ---
 
-## ⚙️ Como instalar e rodar
+## Como instalar e rodar
 
 > Esta seção será preenchida à medida que o projeto avançar.
 
@@ -92,11 +92,11 @@ pip install -r requirements.txt
 streamlit run app/main.py
 ```
 
-> ⚠️ **Nunca** coloque senhas ou chaves de API diretamente no código ou no repositório. Use o arquivo `.env` (que fica fora do Git).
+> **Nunca** coloque senhas ou chaves de API diretamente no código ou no repositório. Use o arquivo `.env` (que fica fora do Git).
 
 ---
 
-## 📅 Cronograma
+## Cronograma
 
 | Semana | Foco | Entregável |
 |---|---|---|
@@ -107,6 +107,6 @@ streamlit run app/main.py
 
 ---
 
-## 📚 Créditos
+## Créditos
 
 As bibliotecas de código aberto utilizadas serão listadas aqui, com os devidos créditos, conforme exigido pelas regras do projeto.
