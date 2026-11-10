@@ -7,6 +7,9 @@ travessia de grafo de conhecimento em manuais de manutenção em português.
 
 Cada item segue o esquema acordado pela equipe:
 
+- `id`: identificador único do paper (arXiv ID, ou `doi:...` para o trabalho da SBC);
+- `source`: origem do registro (`arXiv` ou `SBC`);
+- `url`: link para o artigo original (usado na provenance das respostas);
 - `title`: título do artigo;
 - `authors`: lista de autores;
 - `year`: ano de publicação/submissão;

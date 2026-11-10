@@ -1,5 +1,8 @@
 [
   {
+    "id": "2501.13958",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2501.13958",
     "title": "A Survey of Graph Retrieval-Augmented Generation for Customized Large Language Models",
     "authors": [
       "Qinggang Zhang",
@@ -25,6 +28,9 @@
     ]
   },
   {
+    "id": "2408.08921",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2408.08921",
     "title": "Graph Retrieval-Augmented Generation: A Survey",
     "authors": [
       "Boci Peng",
@@ -46,6 +52,9 @@
     ]
   },
   {
+    "id": "2501.00309",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2501.00309",
     "title": "Retrieval-Augmented Generation with Graphs (GraphRAG)",
     "authors": [
       "Haoyu Han",
@@ -76,6 +85,9 @@
     ]
   },
   {
+    "id": "2404.16130",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2404.16130",
     "title": "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
     "authors": [
       "Darren Edge",
@@ -98,6 +110,9 @@
     ]
   },
   {
+    "id": "2410.05779",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2410.05779",
     "title": "LightRAG: Simple and Fast Retrieval-Augmented Generation",
     "authors": [
       "Zirui Guo",
@@ -116,6 +131,9 @@
     ]
   },
   {
+    "id": "2405.14831",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2405.14831",
     "title": "HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models",
     "authors": [
       "Bernal Jiménez Gutiérrez",
@@ -134,6 +152,9 @@
     ]
   },
   {
+    "id": "2409.13731",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2409.13731",
     "title": "KAG: Boosting LLMs in Professional Domains via Knowledge Augmented Generation",
     "authors": [
       "Lei Liang",
@@ -166,6 +187,9 @@
     ]
   },
   {
+    "id": "2502.14902",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2502.14902",
     "title": "PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths",
     "authors": [
       "Boyu Chen",
@@ -187,6 +211,9 @@
     ]
   },
   {
+    "id": "2405.16506",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2405.16506",
     "title": "GRAG: Graph Retrieval-Augmented Generation",
     "authors": [
       "Yuntong Hu",
@@ -206,6 +233,9 @@
     ]
   },
   {
+    "id": "2402.07630",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2402.07630",
     "title": "G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering",
     "authors": [
       "Xiaoxin He",
@@ -227,6 +257,9 @@
     ]
   },
   {
+    "id": "2407.10805",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2407.10805",
     "title": "Think-on-Graph 2.0: Deep and Faithful Large Language Model Reasoning with Knowledge-guided Retrieval Augmented Generation",
     "authors": [
       "Shengjie Ma",
@@ -248,6 +281,9 @@
     ]
   },
   {
+    "id": "2412.18644",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2412.18644",
     "title": "DynaGRAG | Exploring the Topology of Information for Advancing Language Understanding and Generation in Graph Retrieval-Augmented Generation",
     "authors": [
       "Karishma Thakrar"
@@ -262,6 +298,9 @@
     ]
   },
   {
+    "id": "2503.13804",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2503.13804",
     "title": "Empowering GraphRAG with Knowledge Filtering and Integration",
     "authors": [
       "Kai Guo",
@@ -281,6 +320,9 @@
     ]
   },
   {
+    "id": "2506.19967",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2506.19967",
     "title": "Inference Scaled GraphRAG: Improving Multi Hop Question Answering on Knowledge Graphs",
     "authors": [
       "Travis Thompson",
@@ -299,6 +341,9 @@
     ]
   },
   {
+    "id": "2508.19855",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2508.19855",
     "title": "Youtu-GraphRAG: Vertically Unified Agents for Graph Retrieval-Augmented Complex Reasoning",
     "authors": [
       "Junnan Dong",
@@ -321,6 +366,9 @@
     ]
   },
   {
+    "id": "2509.22009",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2509.22009",
     "title": "GraphSearch: An Agentic Deep Searching Workflow for Graph Retrieval-Augmented Generation",
     "authors": [
       "Cehao Yang",
@@ -343,6 +391,9 @@
     ]
   },
   {
+    "id": "2510.10114",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2510.10114",
     "title": "LinearRAG: Linear Graph Retrieval Augmented Generation on Large-scale Corpora",
     "authors": [
       "Luyao Zhuang",
@@ -364,6 +415,9 @@
     ]
   },
   {
+    "id": "2501.15067",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2501.15067",
     "title": "CG-RAG: Research Question Answering by Citation Graph Retrieval-Augmented LLMs",
     "authors": [
       "Yuntong Hu",
@@ -384,6 +438,9 @@
     ]
   },
   {
+    "id": "2502.01113",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2502.01113",
     "title": "GFM-RAG: Graph Foundation Model for Retrieval Augmented Generation",
     "authors": [
       "Linhao Luo",
@@ -403,6 +460,9 @@
     ]
   },
   {
+    "id": "2502.04413",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2502.04413",
     "title": "MedRAG: Enhancing Retrieval-augmented Generation with Knowledge Graph-Elicited Reasoning for Healthcare Copilot",
     "authors": [
       "Xuejiao Zhao",
@@ -420,6 +480,9 @@
     ]
   },
   {
+    "id": "2502.06864",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2502.06864",
     "title": "Knowledge Graph-Guided Retrieval Augmented Generation",
     "authors": [
       "Xiangrong Zhu",
@@ -437,6 +500,9 @@
     ]
   },
   {
+    "id": "2502.09304",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2502.09304",
     "title": "KET-RAG: A Cost-Efficient Multi-Granular Indexing Framework for Graph-RAG",
     "authors": [
       "Yiqian Huang",
@@ -453,6 +519,9 @@
     ]
   },
   {
+    "id": "2505.24226",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2505.24226",
     "title": "E^2GraphRAG: Streamlining Graph-based RAG for High Efficiency and Effectiveness",
     "authors": [
       "Yibo Zhao",
@@ -471,6 +540,9 @@
     ]
   },
   {
+    "id": "2606.25656",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2606.25656",
     "title": "Is GraphRAG Needed? From Basic RAG to Graph-/Agentic Solutions with Context Optimization",
     "authors": [
       "Long Chen",
@@ -492,6 +564,9 @@
     ]
   },
   {
+    "id": "2608.28766",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/2608.28766",
     "title": "Beyond Vector Search: Comparing Classical RAG with Hybrid GraphRAG for Climate Science Q\\&A",
     "authors": [
       "Daniel Naiff",
@@ -508,6 +583,9 @@
     ]
   },
   {
+    "id": "doi:10.5753/reic.2026.8503",
+    "source": "SBC",
+    "url": "https://doi.org/10.5753/reic.2026.8503",
     "title": "Multimodal RAG with Knowledge Graphs for Portuguese Maintenance Manuals in the Context of Industry 4.0",
     "authors": [
       "Christian Freitas",

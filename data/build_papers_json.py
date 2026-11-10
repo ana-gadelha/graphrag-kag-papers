@@ -41,6 +41,9 @@ ARXIV_KEYWORDS: dict[str, list[str]] = {
 }
 
 BRAZILIAN_PAPER = {
+    "id": "doi:10.5753/reic.2026.8503",
+    "source": "SBC",
+    "url": "https://doi.org/10.5753/reic.2026.8503",
     "title": "Multimodal RAG with Knowledge Graphs for Portuguese Maintenance Manuals in the Context of Industry 4.0",
     "authors": ["Christian Freitas", "Lilian Berton"],
     "year": 2026,
@@ -80,6 +83,11 @@ def main() -> None:
         result = found[paper_id]
         papers.append(
             {
+                # Identificador único do paper (usado na constraint do Neo4j)
+                "id": paper_id,
+                "source": "arXiv",
+                # Link para o artigo original (usado na provenance)
+                "url": f"https://arxiv.org/abs/{paper_id}",
                 "title": clean_text(result.title),
                 "authors": [author.name for author in result.authors],
                 # The arXiv identifier year avoids a timezone boundary shifting
