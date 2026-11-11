@@ -199,8 +199,12 @@ Documentação dos servidores: [LM Studio](https://lmstudio.ai/docs/developer/op
    vizinhos por paper inicial e limita o ranking do grafo a vinte papers.
    Usa `AUTHORED`, `HAS_CONCEPT`, `PROPOSES`, `USES_METHOD` e `EVALUATED_ON`.
 4. **Combinação:** aplica Reciprocal Rank Fusion, somando `1 / (60 + posição)`
-   em cada canal. Remove duplicatas pelo ID e desempata pelo ID do paper.
-   As pontuações representam relevância relativa, não probabilidades.
+   em cada canal. Na seleção final, prioriza papers ligados a mais entidades
+   explicitamente citadas na pergunta; entre papers com a mesma quantidade de
+   correspondências diretas, ordena por RRF e desempata pelo ID. Isso evita que
+   vizinhos encontrados nos dois canais excluam os artigos de um autor citado.
+   Remove duplicatas pelo ID. O campo `score` continua sendo a pontuação RRF,
+   representa relevância relativa e pode não ser decrescente na ordem final.
 5. **Evidências:** seleciona seis papers por padrão e recupera seus metadados,
    abstracts e relações. Esses mesmos dados formam o contexto e o subgrafo.
 6. **Resposta:** envia pergunta e evidências ao LLM configurado, pedindo
@@ -291,13 +295,24 @@ contra Neo4j e o servidor de geração deve ser conferida separadamente pelos
 comandos acima. Esta adição não foi executada contra um modelo carregado no
 LM Studio, Ollama ou llama.cpp.
 
-Também foi realizada uma validação local com Neo4j Community 5.26 e o modelo
-MiniLM real: importação e indexação dos 26 papers, segunda indexação sem
-reprocessamento, atualização de um abstract, reparo de vetor inválido e limites
-da expansão. A pergunta de demonstração recuperou seis fontes, 79 nós e 82
-relações. A função pública foi exercitada com banco e encoder reais e o SDK
-OpenAI usando transporte HTTP simulado; não houve geração pela API OpenAI real
-nem validação do banco remoto do grupo.
+Na validação real do Aura, o banco inicialmente vazio foi reconstruído com
+302 nós e 335 relacionamentos. A comparação com os dados locais não encontrou
+nós ou relações ausentes, diferenças de propriedades ou relações duplicadas.
+As cinco constraints e os quatro índices explícitos foram conferidos, com
+todos os índices `ONLINE`.
+
+Foram gravados 26 embeddings MiniLM reais de 384 dimensões. A segunda execução
+reaproveitou todos os vetores, sem reprocessamento. As consultas de GraphRAG,
+HotpotQA e autor compartilhado passaram no banco real, incluindo conferência
+das fontes e da direção/completude das relações do subgrafo. Esse teste revelou
+e corrigiu a perda de artigos do autor citado durante a fusão dos rankings.
+O conjunto automatizado passou com 44 testes.
+
+A chave OpenAI autenticou e consultou o modelo, mas a tentativa de geração
+real retornou HTTP 429, código `credit_balance_exhausted`. Portanto, a geração
+completa de respostas por `answer_question()` e pelo CLI permanece pendente de
+saldo no provedor ou de um servidor local disponível. Os testes de citações e
+dos protocolos permanecem cobertos com transporte HTTP simulado.
 
 - O MVP usa metadados e abstracts, sem processar os PDFs completos. A curadoria
   atual identifica datasets em apenas cinco dos 26 papers.
