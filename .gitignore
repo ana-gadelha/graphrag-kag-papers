@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Credenciais e ambiente Python
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Arquivos gerados pelo pipeline
+output/*.json
+!output/.gitkeep
