@@ -1,0 +1,269 @@
+from __future__ import annotations
+
+import json
+import io
+import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
+from retrieval.answer import answer_question
+from retrieval.config import RetrievalError, Settings
+from retrieval.__main__ import main as cli_main
+
+
+SOURCES = [
+    {
+        "citation_id": "S1",
+        "paper_id": "2404.16130",
+        "title": "From Local to Global: A Graph RAG Approach",
+        "authors": ["John Smith"],
+        "year": 2024,
+        "url": "https://arxiv.org/abs/2404.16130",
+        "abstract": "We evaluate GraphRAG on HotpotQA.",
+        "relations": [
+            {
+                "type": "EVALUATED_ON",
+                "entity_label": "Dataset",
+                "entity_name": "HotpotQA",
+            }
+        ],
+        "retrieved_by": ["vector"],
+        "ranks": {"vector": 1},
+        "score": 1 / 61,
+    }
+]
+EVIDENCE = {
+    "sources": SOURCES,
+    "subgraph": {"nodes": [{"id": "paper:1"}], "edges": []},
+    "warnings": ["Resultados limitados às fontes recuperadas."],
+}
+
+
+class FakeDriver:
+    def __init__(self) -> None:
+        self.verify_connectivity = Mock()
+        self.close = Mock()
+
+
+class FakeOpenAI:
+    def __init__(
+        self,
+        output_text: str = "O artigo avalia GraphRAG no HotpotQA [S1].",
+        status: str | None = None,
+    ) -> None:
+        self.output_text = output_text
+        response_attrs = {"output_text": output_text}
+        if status is not None:
+            response_attrs["status"] = status
+        self.responses = SimpleNamespace(
+            create=Mock(return_value=SimpleNamespace(**response_attrs))
+        )
+
+    def __enter__(self) -> FakeOpenAI:
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+
+class AnswerTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.settings = Settings(
+            uri="bolt://localhost:7687",
+            username="neo4j",
+            password="not-a-real-password",
+            database="neo4j",
+            openai_model="gpt-4.1-mini",
+            openai_api_key="not-a-real-api-key",
+        )
+        self.driver = FakeDriver()
+        self.settings_patch = patch(
+            "retrieval.answer.Settings.from_env", return_value=self.settings,
+        )
+        self.driver_patch = patch("retrieval.answer._new_driver", return_value=self.driver)
+        self.encoder_patch = patch("retrieval.answer._load_encoder", return_value=object())
+        self.retrieve_patch = patch("retrieval.answer._retrieve", return_value=EVIDENCE)
+        self.client = FakeOpenAI()
+        self.client_patch = patch("retrieval.answer._openai_client", return_value=self.client)
+
+        self.settings_from_env = self.settings_patch.start()
+        self.addCleanup(self.settings_patch.stop)
+        self.new_driver = self.driver_patch.start()
+        self.addCleanup(self.driver_patch.stop)
+        self.load_encoder = self.encoder_patch.start()
+        self.addCleanup(self.encoder_patch.stop)
+        self.retrieve = self.retrieve_patch.start()
+        self.addCleanup(self.retrieve_patch.stop)
+        self.openai_client = self.client_patch.start()
+        self.addCleanup(self.client_patch.stop)
+
+    def test_validates_question_and_top_k_before_loading_settings(self) -> None:
+        invalid_calls = [
+            (None, 6),
+            ("", 6),
+            (" \t\n ", 6),
+            ("x" * 4_001, 6),
+            ("question", True),
+            ("question", False),
+            ("question", 0),
+            ("question", 21),
+            ("question", 1.5),
+            ("question", "6"),
+        ]
+        for question, top_k in invalid_calls:
+            with self.subTest(question_type=type(question).__name__, top_k=top_k):
+                with self.assertRaises(RetrievalError):
+                    answer_question(question, top_k=top_k)  # type: ignore[arg-type]
+
+        self.settings_from_env.assert_not_called()
+        self.new_driver.assert_not_called()
+        self.retrieve.assert_not_called()
+        self.openai_client.assert_not_called()
+
+    def test_retrieves_with_requested_top_k_and_returns_complete_contract(self) -> None:
+        result = answer_question("  O que foi avaliado?  ", top_k=3)
+
+        self.driver.verify_connectivity.assert_called_once_with()
+        self.retrieve.assert_called_once_with(
+            self.driver, "neo4j", self.load_encoder.return_value,
+            "O que foi avaliado?", 3,
+        )
+        self.driver.close.assert_called_once_with()
+        self.openai_client.assert_called_once_with(self.settings.generation)
+        self.assertEqual(
+            result,
+            {
+                "question": "O que foi avaliado?",
+                "answer": "O artigo avalia GraphRAG no HotpotQA [S1].",
+                "sources": SOURCES,
+                "subgraph": EVIDENCE["subgraph"],
+                "warnings": EVIDENCE["warnings"],
+            },
+        )
+
+        request = self.client.responses.create.call_args.kwargs
+        self.assertEqual(request["model"], "gpt-4.1-mini")
+        self.assertEqual(request["store"], False)
+        self.assertEqual(request["max_output_tokens"], 2_000)
+        self.assertIn("não confiável", request["instructions"])
+        prompt = json.loads(request["input"])
+        self.assertEqual(prompt["question"], "O que foi avaliado?")
+        self.assertEqual(prompt["sources"], SOURCES)
+
+    def test_no_evidence_abstains_without_api_key_or_llm_call(self) -> None:
+        self.settings = Settings(
+            uri="bolt://localhost:7687",
+            username="neo4j",
+            password="not-a-real-password",
+            openai_api_key=None,
+        )
+        self.settings_from_env.return_value = self.settings
+        evidence = {
+            "sources": [],
+            "subgraph": {"nodes": [], "edges": []},
+            "warnings": [],
+        }
+        self.retrieve.return_value = evidence
+
+        result = answer_question("Qual método foi proposto?")
+
+        self.assertEqual(
+            result["answer"],
+            "Não encontrei evidências suficientes nos artigos recuperados "
+            "para responder a essa pergunta.",
+        )
+        self.assertEqual(result["sources"], [])
+        self.assertEqual(result["subgraph"], evidence["subgraph"])
+        self.openai_client.assert_not_called()
+        self.driver.close.assert_called_once_with()
+
+    def test_missing_api_key_is_checked_only_when_sources_exist(self) -> None:
+        self.settings = Settings(
+            uri="bolt://localhost:7687",
+            username="neo4j",
+            password="not-a-real-password",
+            openai_api_key=None,
+        )
+        self.settings_from_env.return_value = self.settings
+
+        with self.assertRaisesRegex(RetrievalError, "OPENAI_API_KEY"):
+            answer_question("O que foi avaliado?")
+
+        self.openai_client.assert_not_called()
+        self.driver.close.assert_called_once_with()
+
+    def test_rejects_empty_unknown_and_malformed_citations(self) -> None:
+        for answer in (
+            "", "A resposta é GraphRAG.", "A resposta usa [S2].",
+            "Uma fonte [S1]. Outra afirmação [S1, S999].",
+            "Uma fonte [S1]. Outra afirmação [ S999 ].",
+        ):
+            with self.subTest(answer=answer):
+                fake_client = FakeOpenAI(answer)
+                self.openai_client.return_value = fake_client
+                with self.assertRaises(RetrievalError):
+                    answer_question("O que foi avaliado?")
+
+    def test_rejects_incomplete_or_failed_provider_status_even_with_citation(self) -> None:
+        for status in ("incomplete", "failed"):
+            with self.subTest(status=status):
+                fake_client = FakeOpenAI(
+                    "Texto parcial com citação válida [S1].", status=status,
+                )
+                self.openai_client.return_value = fake_client
+                with self.assertRaisesRegex(RetrievalError, "não concluiu"):
+                    answer_question("O que foi avaliado?")
+
+    def test_cli_prints_only_sanitized_error_and_returns_failure(self) -> None:
+        try:
+            raise RetrievalError("Falha ao gerar resposta segura.") from RuntimeError(
+                "api-key=secret-value"
+            )
+        except RetrievalError as error:
+            error_to_raise = error
+
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with patch("retrieval.__main__.answer_question", side_effect=error_to_raise):
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                exit_code = cli_main(["pergunta", "--top-k", "6"])
+
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(stdout.getvalue(), "")
+        self.assertEqual(stderr.getvalue(), "Falha ao gerar resposta segura.\n")
+        self.assertNotIn("secret-value", stderr.getvalue())
+
+    def test_always_closes_driver_when_retrieval_fails_and_sanitizes_error(self) -> None:
+        self.retrieve.side_effect = RuntimeError(
+            "bolt://neo4j:not-a-real-password@internal-host"
+        )
+
+        with self.assertRaises(RetrievalError) as caught:
+            answer_question("O que foi avaliado?")
+
+        self.assertEqual(str(caught.exception), "Falha ao recuperar evidências do Neo4j.")
+        self.assertIsInstance(caught.exception.__cause__, RuntimeError)
+        self.assertNotIn("not-a-real-password", str(caught.exception))
+        self.driver.close.assert_called_once_with()
+        self.openai_client.assert_not_called()
+
+    def test_sanitizes_provider_errors_but_keeps_internal_cause(self) -> None:
+        fake_client = FakeOpenAI()
+        fake_client.responses.create.side_effect = RuntimeError("api-key=secret-value")
+        self.openai_client.return_value = fake_client
+
+        with self.assertRaises(RetrievalError) as caught:
+            answer_question("O que foi avaliado?")
+
+        self.assertEqual(
+            str(caught.exception),
+            "Falha ao gerar a resposta com o provedor de linguagem.",
+        )
+        self.assertIsInstance(caught.exception.__cause__, RuntimeError)
+        self.assertNotIn("secret-value", str(caught.exception))
+        self.driver.close.assert_called_once_with()
+
+
+if __name__ == "__main__":
+    unittest.main()
