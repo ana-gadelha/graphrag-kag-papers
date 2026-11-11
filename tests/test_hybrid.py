@@ -110,6 +110,33 @@ class HybridTests(unittest.TestCase):
         encoder.encode.assert_not_called()
 
     @patch("retrieval.hybrid.check_index")
+    def test_direct_entity_evidence_survives_higher_rrf_expanded_neighbors(self, check_index):
+        for direct_matches in ([], [{"paper_id": "b", "direct_matches": 1}]):
+            with self.subTest(direct=bool(direct_matches)):
+                session = Mock()
+                responses = {
+                    hybrid.PAPERS_QUERY: [paper("a"), paper("b"), paper("c")],
+                    hybrid.VECTOR_QUERY: [{"paper_id": "a", "score": 0.9}],
+                    hybrid.ENTITIES_QUERY: [{"label": "Author", "name": "Autor citado"}],
+                    hybrid.DIRECT_QUERY: direct_matches,
+                    hybrid.EXPAND_QUERY: [
+                        {"paper_id": "a", "shared_connections": 2},
+                        {"paper_id": "c", "shared_connections": 1},
+                    ],
+                    hybrid.FACTS_QUERY: [],
+                }
+                session.run.side_effect = lambda query, **params: [Record(r) for r in responses[query]]
+                driver = Mock()
+                driver.session.return_value.__enter__ = Mock(return_value=session)
+                driver.session.return_value.__exit__ = Mock(return_value=False)
+                encoder = Mock()
+                encoder.encode.return_value = [1.0] + [0.0] * 383
+                result = hybrid.retrieve(driver, "neo4j", encoder, "Artigos de Autor citado?", 1)
+                selected = result["sources"][0]
+                self.assertEqual(selected["paper_id"], "b" if direct_matches else "a")
+                self.assertEqual(selected["retrieved_by"], ["graph"] if direct_matches else ["vector", "graph"])
+
+    @patch("retrieval.hybrid.check_index")
     def test_empty_database_returns_no_evidence(self, check_index):
         session = Mock()
         session.run.return_value = []

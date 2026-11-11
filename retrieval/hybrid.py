@@ -194,7 +194,13 @@ def retrieve(driver: Any, database: str, encoder: Any, question: str, top_k: int
             (direct_scores.keys() | shared_scores.keys()) & papers.keys(),
             key=lambda pid: (-direct_scores.get(pid, 0), -shared_scores.get(pid, 0), pid),
         )[:20]
-        ranked = fuse_rankings(vector_ids, graph_ids)[:top_k]
+        ranked = fuse_rankings(vector_ids, graph_ids)
+        # Vizinhos de expansão presentes nos dois canais não devem excluir os
+        # próprios papers ligados às entidades explicitamente citadas na pergunta.
+        ranked.sort(key=lambda item: (
+            -direct_scores.get(item["paper_id"], 0), -item["score"], item["paper_id"],
+        ))
+        ranked = ranked[:top_k]
         facts = (_records(session, FACTS_QUERY, paper_ids=[r["paper_id"] for r in ranked])
                  if ranked else [])
         # DISTINCT in Cypher plus deterministic sorting make evidence stable across runs.
