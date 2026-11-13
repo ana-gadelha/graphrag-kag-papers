@@ -33,17 +33,20 @@ ambiente. Não versione credenciais.
 
 ### 1. Importar o corpus e aplicar o schema
 
-Se o banco ainda não estiver preparado, execute o pipeline existente:
+Se o banco ainda não estiver preparado, execute o pipeline completo:
 
 ```bash
-python extraction/load_graph.py
+python run_pipeline.py --provider curated --import-neo4j --index-embeddings
 ```
 
 Veja os detalhes em [extraction](../extraction/README.md) e
 [schema](../schema/README.md). A consulta não executa importação nem modifica o
-schema automaticamente.
+schema automaticamente. `python extraction/load_graph.py` é um atalho para esse
+mesmo fluxo completo com curadoria. Falhas interrompem as próximas etapas.
 
 ### 2. Gerar os embeddings
+
+O pipeline completo já executa esta etapa. Para reindexar separadamente:
 
 ```bash
 python -m retrieval.index_embeddings
@@ -173,7 +176,7 @@ automática de protocolo ou retorno à nuvem em caso de falha. O cliente também
 fixa o endereço explicitamente: `OPENAI_BASE_URL` não controla mais retrieval;
 use `RETRIEVAL_LLM_BASE_URL` para isolar essa etapa da extração.
 
-Se a resposta for truncada, bloqueada, vazia ou tiver citações inválidas, a
+Se a resposta for truncada, bloqueada, vazia, tiver JSON inválido ou citações inválidas, a
 função sinaliza erro. Para reduzir o contexto enviado a um modelo com janela
 menor, use, por exemplo, `--top-k 3`. Configure também uma janela adequada no
 servidor; a aplicação não altera essa configuração por conta própria.
@@ -210,6 +213,19 @@ Documentação dos servidores: [LM Studio](https://lmstudio.ai/docs/developer/op
 6. **Resposta:** envia pergunta e evidências ao LLM configurado, pedindo
    resposta em português com referências `[S1]`, `[S2]`, etc. Abstracts e pergunta
    são tratados como dados, sem autorização para executar suas instruções.
+   O provedor devolve internamente JSON com `answer` textual e `abstained`
+   booleano, sem depender de recursos de schema exclusivos da OpenAI. Esse
+   envelope não altera o contrato público de `answer_question()`.
+   Respostas factuais precisam citar fontes recuperadas. Na abstenção total,
+   mesmo com fontes recuperadas, a função publica uma mensagem determinística
+   de evidência insuficiente e acrescenta um aviso; preserva fontes e subgrafo
+   para inspeção. Respostas parciais continuam exigindo citações e indicando
+   lacunas. Citações desconhecidas ou malformadas são rejeitadas também quando
+   o modelo sinaliza abstenção.
+
+Os dois protocolos exigem conclusão normal do provedor. Erros de autenticação,
+rede, timeout, permissões e quota têm mensagens específicas sem incluir corpos
+de erro ou credenciais. Ver [erros da API OpenAI](https://developers.openai.com/api/docs/guides/error-codes).
 
 As consultas Cypher são fixas e parametrizadas. O LLM não gera Cypher nem recebe
 credenciais do Neo4j. `answer_question()` realiza apenas leituras no banco;
