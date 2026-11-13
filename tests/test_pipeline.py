@@ -6,7 +6,6 @@ from src.common import comparison_key, unique_clean_strings
 from src.extract_entities import extract_by_rules
 from src.validate_data import validate_and_normalize
 
-
 SAMPLE = {
     "id": "2404.16130",
     "source": "arXiv",
@@ -31,6 +30,22 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(report["valid"])
         self.assertEqual(papers[0]["authors"], ["John Smith", "Maria Silva"])
         self.assertEqual(papers[0]["keywords"], ["GraphRAG", "knowledge graphs"])
+
+    def test_invalid_scalar_types_and_empty_corpus(self) -> None:
+        for year in (True, None, [], {}, "2024", 2024.0):
+            _, report = validate_and_normalize([{**SAMPLE, "year": year}])
+            self.assertFalse(report["valid"])
+        for field in ("id", "source", "url", "title", "abstract"):
+            for value in (None, True, 12, []):
+                _, report = validate_and_normalize([{**SAMPLE, field: value}])
+                self.assertFalse(report["valid"])
+        self.assertFalse(validate_and_normalize([])[1]["valid"])
+        self.assertFalse(validate_and_normalize({})[1]["valid"])
+
+    def test_empty_keywords_is_warning(self) -> None:
+        _, report = validate_and_normalize([{**SAMPLE, "keywords": []}])
+        self.assertTrue(report["valid"])
+        self.assertTrue(report["warnings"])
 
     def test_rule_extraction(self) -> None:
         entities = extract_by_rules(SAMPLE)

@@ -5,8 +5,13 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from .common import clean_text, comparison_key, read_json, unique_clean_strings, write_json
-
+from .common import (
+    clean_text,
+    comparison_key,
+    read_json,
+    unique_clean_strings,
+    write_json,
+)
 
 REQUIRED_FIELDS = (
     "id",
@@ -21,23 +26,30 @@ REQUIRED_FIELDS = (
 
 
 def normalize_paper(raw: dict[str, Any]) -> dict[str, Any]:
+    """Normaliza campos cuja presença e tipos já foram validados."""
     return {
-        "id": clean_text(str(raw.get("id", ""))),
-        "source": clean_text(str(raw.get("source", ""))),
-        "url": clean_text(str(raw.get("url", ""))),
-        "title": clean_text(str(raw.get("title", ""))),
+        "id": clean_text(raw["id"]),
+        "source": clean_text(raw["source"]),
+        "url": clean_text(raw["url"]),
+        "title": clean_text(raw["title"]),
         "authors": unique_clean_strings(raw.get("authors", [])),
         "year": raw.get("year"),
-        "abstract": clean_text(str(raw.get("abstract", ""))),
+        "abstract": clean_text(raw["abstract"]),
         "keywords": unique_clean_strings(raw.get("keywords", [])),
     }
 
 
 def validate_and_normalize(data: Any) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if not isinstance(data, list):
-        raise ValueError("O arquivo deve conter uma lista JSON de papers.")
+        return [], {
+            "valid": False,
+            "errors": ["O arquivo deve conter uma lista JSON de papers."],
+            "warnings": [],
+        }
 
     errors: list[str] = []
+    if not data:
+        errors.append("Corpus vazio.")
     warnings: list[str] = []
     normalized: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
@@ -64,6 +76,17 @@ def validate_and_normalize(data: Any) -> tuple[list[dict[str, Any]], dict[str, A
             errors.append(f"Item {position}: keywords deve ser uma lista de textos.")
             continue
 
+        invalid = [
+            f
+            for f in ("id", "source", "url", "title", "abstract")
+            if not isinstance(raw[f], str)
+        ]
+        if invalid:
+            errors.append(f"Item {position}: campos devem ser textos: {invalid}.")
+            continue
+        if type(raw["year"]) is not int or not 2023 <= raw["year"] <= 2026:
+            errors.append(f"Item {position}: ano deve ser inteiro entre 2023 e 2026.")
+            continue
         paper = normalize_paper(raw)
         paper_id = comparison_key(paper["id"])
 
@@ -75,11 +98,6 @@ def validate_and_normalize(data: Any) -> tuple[list[dict[str, Any]], dict[str, A
             errors.append(f"Item {position}: lista de autores vazia.")
         if not paper["keywords"]:
             warnings.append(f"Item {position} ({paper['id']}): sem palavras-chave.")
-
-        if not isinstance(paper["year"], int) or not 2023 <= paper["year"] <= 2026:
-            errors.append(
-                f"Item {position} ({paper['id']}): ano fora do intervalo 2023–2026."
-            )
 
         if paper_id in seen_ids:
             errors.append(f"Item {position}: id duplicado: {paper['id']}.")
@@ -125,7 +143,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    normalized, report = validate_and_normalize(read_json(args.input))
+    try:
+        normalized, report = validate_and_normalize(read_json(args.input))
+    except (OSError, ValueError) as exc:
+        normalized, report = (
+            [],
+            {
+                "valid": False,
+                "errors": [f"Leitura do corpus falhou ({type(exc).__name__})."],
+            },
+        )
     write_json(args.report, report)
     if not report["valid"]:
         raise SystemExit(
