@@ -26,11 +26,11 @@ graph LR
 
 | Label | Propriedades | Origem dos dados |
 |---|---|---|
-| `Paper` | `id` (único), `title`, `year`, `abstract`, `url`, `source`, `embedding` | `data/papers.json` (+ `embedding` gerado na busca híbrida) |
+| `Paper` | `id` (único), `title`, `year`, `abstract`, `url`, `source`, `embedding`, `embedding_model`, `embedding_hash` | `data/papers.json` + indexação local de embeddings |
 | `Author` | `name` (único) | campo `authors` do `papers.json` |
 | `Concept` | `name` (único) | campo `keywords` do `papers.json` |
-| `Method` | `name` (único) | extraído dos abstracts pelo LLM (Text-to-Graph) |
-| `Dataset` | `name` (único) | extraído dos abstracts pelo LLM (Text-to-Graph) |
+| `Method` | `name` (único) | curadoria, heurística ou extração LLM dos abstracts |
+| `Dataset` | `name` (único) | curadoria, heurística ou extração LLM dos abstracts |
 
 ## 3. Tipos de relacionamento
 
@@ -75,6 +75,16 @@ graph LR
   mesmo nome virariam um único nó; é uma simplificação aceita no MVP.
 
 ## 5. Como aplicar o schema
+
+O fluxo automático recomendado é
+`python run_pipeline.py --provider curated --import-neo4j --index-embeddings`.
+Ele aplica o schema, aguarda os índices e valida sua definição, além dos dados
+e embeddings. Os passos abaixo são a alternativa manual. A interface apenas
+consulta o banco e não altera o schema.
+
+O validador aceita a identificação `UNIQUENESS` do Cypher 5 e
+`NODE_PROPERTY_UNIQUENESS` do Cypher 25 para as mesmas constraints de nós,
+conforme a [documentação do Neo4j](https://neo4j.com/docs/cypher-manual/5/constraints/list-constraints/).
 
 1. Abra o banco Neo4j do grupo (AuraDB Free ou Neo4j Desktop).
 2. Abra a ferramenta de consulta (**Query** no Aura, ou **Neo4j Browser**).
