@@ -3,3 +3,5 @@ neo4j>=5.28,<7
 python-dotenv>=1.0,<2
 openai>=1.60,<3
 sentence-transformers>=3,<6
+streamlit>=1.50,<2
+graphviz>=0.20,<1
