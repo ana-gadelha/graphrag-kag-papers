@@ -157,19 +157,46 @@ representará esse ambiente; use o endereço pelo qual ele alcança o servidor.
 | `RETRIEVAL_LLM_API` | `chat_completions` ou `responses`; padrão: chat com endereço próprio, Responses com OpenAI |
 | `RETRIEVAL_LLM_API_KEY` | Chave específica; sem ela, usa `local` com endereço próprio ou `OPENAI_API_KEY` no padrão OpenAI |
 | `RETRIEVAL_LLM_TIMEOUT` | Timeout positivo em segundos; padrão: 120 com endereço próprio e 30 com OpenAI |
+| `RETRIEVAL_LLM_MAX_OUTPUT_TOKENS` | Inteiro positivo; teto de geração, com padrão 2000 quando ausente ou vazio; os limites aceitos dependem do modelo/provedor |
 
 O timeout é aplicado pelo cliente HTTP às operações da requisição, incluindo
 esperar a resposta; o SDK também permite até duas tentativas adicionais em
 erros transitórios. Portanto, não representa um limite total de execução.
 
 `chat_completions` usa `/chat/completions`, mensagens `system`/`user` e
-`max_tokens=2000`. `responses` usa `/responses`, `instructions`,
-`max_output_tokens=2000` e `store=False`. Para um servidor local que implemente
+`max_tokens` com o teto configurado. `responses` usa `/responses`, `instructions`,
+`max_output_tokens` com o mesmo teto e `store=False`. Para um servidor local que implemente
 Responses, altere explicitamente:
 
 ```dotenv
 RETRIEVAL_LLM_API=responses
 ```
+
+### Limite de geração e raciocínio
+
+Para ampliar o orçamento de geração, acrescente ao `.env`, por exemplo:
+
+```dotenv
+RETRIEVAL_LLM_MAX_OUTPUT_TOKENS=8192
+```
+
+O teto não é um tamanho obrigatório de resposta. Na OpenRouter, modelos com
+raciocínio podem consumir esse orçamento entre raciocínio interno e texto final;
+um limite baixo pode terminar com `finish_reason: length` antes de produzir o
+JSON da resposta. Aumentá-lo dá mais espaço, mas não garante conclusão nem muda
+o controle de raciocínio do modelo. A aplicação continua rejeitando gerações
+incompletas. Consulte a [documentação de raciocínio da OpenRouter](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
+
+Um teto maior permite mais processamento e pode aumentar a espera, o consumo de
+tokens e o custo nos modelos pagos. O modelo deve aceitar o teto solicitado e
+acomodar entrada e geração em sua janela de contexto. Modelos gratuitos mantêm
+suas quotas e restrições de capacidade; ampliar o teto não remove esses limites.
+O timeout é independente e pode precisar ser revisto para gerações mais longas.
+Esse parâmetro não altera `top_k`, os embeddings ou as consultas ao grafo.
+
+Reinicie o Streamlit após editar o `.env`. Variáveis já exportadas no ambiente
+têm precedência sobre o arquivo. A configuração do LLM só é validada ao gerar
+uma resposta: indexação e abstenção sem fontes continuam independentes dela.
 
 A compatibilidade é por endpoint e pelos parâmetros aceitos. Não há troca
 automática de protocolo ou retorno à nuvem em caso de falha. O cliente também

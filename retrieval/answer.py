@@ -13,7 +13,6 @@ from .confidence import assess_confidence
 
 MAX_QUESTION_LENGTH = 4_000
 MAX_TOP_K = 20
-MAX_OUTPUT_TOKENS = 2_000
 _CITATION_RE = re.compile(r"\[(S\d+)\]")
 _SOURCE_ID_RE = re.compile(r"S\d+")
 ABSTENTION_ANSWER = (
@@ -238,7 +237,7 @@ def _generate_answer(
                             "content": _serialize_evidence(question, evidence),
                         },
                     ],
-                    max_tokens=MAX_OUTPUT_TOKENS,
+                    max_tokens=llm.max_output_tokens,
                 )
                 if not response.choices or response.choices[0].finish_reason != "stop":
                     raise RetrievalError(
@@ -255,7 +254,7 @@ def _generate_answer(
                     instructions=_INSTRUCTIONS,
                     input=_serialize_evidence(question, evidence),
                     store=False,
-                    max_output_tokens=MAX_OUTPUT_TOKENS,
+                    max_output_tokens=llm.max_output_tokens,
                 )
                 if getattr(response, "status", None) != "completed":
                     raise RetrievalError(

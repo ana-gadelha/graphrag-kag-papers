@@ -15,6 +15,7 @@ class RetrievalError(RuntimeError):
 
 
 OPENAI_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_MAX_OUTPUT_TOKENS = 2_000
 
 
 def _env(name: str) -> str:
@@ -30,6 +31,7 @@ class LLMSettings:
     base_url: str = field(default=OPENAI_BASE_URL, repr=False)
     api: str = "responses"
     timeout: float = 30.0
+    max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS
 
     def __post_init__(self) -> None:
         if self.api not in {"responses", "chat_completions"}:
@@ -55,6 +57,8 @@ class LLMSettings:
             )
         if not math.isfinite(self.timeout) or self.timeout <= 0:
             raise RetrievalError("RETRIEVAL_LLM_TIMEOUT deve ser um número positivo e finito.")
+        if type(self.max_output_tokens) is not int or self.max_output_tokens <= 0:
+            raise RetrievalError("RETRIEVAL_LLM_MAX_OUTPUT_TOKENS deve ser um inteiro positivo.")
 
     @classmethod
     def from_environment(
@@ -75,6 +79,14 @@ class LLMSettings:
             raise RetrievalError(
                 "RETRIEVAL_LLM_TIMEOUT deve ser um número positivo e finito."
             ) from None
+        try:
+            max_output_tokens = int(
+                value("RETRIEVAL_LLM_MAX_OUTPUT_TOKENS") or str(DEFAULT_MAX_OUTPUT_TOKENS)
+            )
+        except ValueError:
+            raise RetrievalError(
+                "RETRIEVAL_LLM_MAX_OUTPUT_TOKENS deve ser um inteiro positivo."
+            ) from None
         # Um endereço alternativo nunca herda a chave destinada à OpenAI.
         api_key = value("RETRIEVAL_LLM_API_KEY") or ("local" if base_url else default_key)
         return cls(
@@ -83,6 +95,7 @@ class LLMSettings:
             base_url=base_url or OPENAI_BASE_URL,
             api=value("RETRIEVAL_LLM_API") or ("chat_completions" if base_url else "responses"),
             timeout=timeout,
+            max_output_tokens=max_output_tokens,
         )
 
 

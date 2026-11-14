@@ -117,6 +117,7 @@ class LLMConfigurationTests(unittest.TestCase):
             self.assertEqual(settings.generation.model, "cloud-model")
             self.assertEqual(settings.generation.api_key, "cloud-test-key")
             self.assertEqual(settings.generation.timeout, 30)
+            self.assertEqual(settings.generation.max_output_tokens, 2000)
             self.assertEqual(
                 os.environ["OPENAI_BASE_URL"], "http://unrelated-service/v1"
             )
@@ -146,11 +147,13 @@ class LLMConfigurationTests(unittest.TestCase):
             RETRIEVAL_LLM_API="responses",
             RETRIEVAL_LLM_API_KEY="private-local-key",
             RETRIEVAL_LLM_TIMEOUT="240.5",
+            RETRIEVAL_LLM_MAX_OUTPUT_TOKENS="8192",
         ):
             settings = Settings.from_env()
         self.assertEqual(settings.generation.api, "responses")
         self.assertEqual(settings.generation.api_key, "private-local-key")
         self.assertEqual(settings.generation.timeout, 240.5)
+        self.assertEqual(settings.generation.max_output_tokens, 8192)
         self.assertNotIn("private-local-key", repr(settings.generation))
 
     def test_scoped_model_and_key_can_override_cloud_defaults(self):
@@ -162,6 +165,15 @@ class LLMConfigurationTests(unittest.TestCase):
         self.assertEqual(settings.generation.api_key, "scoped-key")
         self.assertEqual(settings.generation.base_url, OPENAI_BASE_URL)
 
+    def test_output_limit_defaults_and_positive_integer_validation(self):
+        for value, expected in (("", 2000), ("  ", 2000), ("1", 1), (" 8192 ", 8192)):
+            with self.subTest(value=value), environment(RETRIEVAL_LLM_MAX_OUTPUT_TOKENS=value):
+                self.assertEqual(Settings.from_env().generation.max_output_tokens, expected)
+        for value in (True, False, 0, -1, 1.5, "8192", None):
+            with self.subTest(constructor_value=value):
+                with self.assertRaisesRegex(RetrievalError, "MAX_OUTPUT_TOKENS"):
+                    LLMSettings(max_output_tokens=value)
+
     def test_invalid_settings_are_actionable_and_do_not_echo_values(self):
         bad_configs = [
             {"RETRIEVAL_LLM_BASE_URL": "http://localhost:1234/v1"},
@@ -169,6 +181,10 @@ class LLMConfigurationTests(unittest.TestCase):
             *[
                 {"RETRIEVAL_LLM_TIMEOUT": value}
                 for value in ("zero", "0", "-1", "nan", "inf")
+            ],
+            *[
+                {"RETRIEVAL_LLM_MAX_OUTPUT_TOKENS": value}
+                for value in ("0", "-1", "1.5", "8e3", "nan", "inf", "secret")
             ],
             *[
                 {"RETRIEVAL_LLM_BASE_URL": value, "RETRIEVAL_LLM_MODEL": "local-model"}
@@ -241,6 +257,22 @@ class LocalLLMProtocolTests(unittest.TestCase):
         self.assertFalse(body["store"])
         self.assertEqual(body["max_output_tokens"], 2000)
         self.assertIn("instructions", body)
+
+    def test_configured_output_limit_reaches_both_protocols(self):
+        for api, payload, field in (
+            ("chat_completions", chat_payload(), "max_tokens"),
+            ("responses", responses_payload(), "max_output_tokens"),
+        ):
+            with self.subTest(api=api), environment(
+                RETRIEVAL_LLM_API=api,
+                RETRIEVAL_LLM_MAX_OUTPUT_TOKENS="8192",
+            ):
+                settings = Settings.from_env()
+                with sdk_transport(payload) as (requests, _):
+                    answer = _generate_answer(settings, "Pergunta?", EVIDENCE)
+                self.assertEqual(answer.answer, TEXT)
+                self.assertEqual(len(requests), 1)
+                self.assertEqual(json.loads(requests[0].content)[field], 8192)
 
     def test_chat_rejects_truncation_blocking_and_unexpected_choices(self):
         payloads = [
@@ -401,7 +433,8 @@ class LocalLLMProtocolTests(unittest.TestCase):
             "warnings": [],
         }
         with (
-            environment(RETRIEVAL_LLM_BASE_URL="http://localhost:1234/v1"),
+            environment(RETRIEVAL_LLM_BASE_URL="http://localhost:1234/v1",
+                        RETRIEVAL_LLM_MAX_OUTPUT_TOKENS="inválido"),
             patch(
                 "retrieval.answer._new_driver",
                 return_value=driver,
@@ -429,7 +462,8 @@ class LocalLLMProtocolTests(unittest.TestCase):
         driver = Mock()
         report = {"papers": 0, "embedded": 0, "skipped": 0}
         with (
-            environment(RETRIEVAL_LLM_BASE_URL="http://localhost:1234/v1"),
+            environment(RETRIEVAL_LLM_BASE_URL="http://localhost:1234/v1",
+                        RETRIEVAL_LLM_MAX_OUTPUT_TOKENS="inválido"),
             patch(
                 "retrieval.index_embeddings.create_driver",
                 return_value=driver,
