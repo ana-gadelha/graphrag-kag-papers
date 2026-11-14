@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import unittest
+from copy import deepcopy
 from contextlib import redirect_stderr, redirect_stdout
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -10,6 +11,7 @@ from unittest.mock import Mock, patch
 from retrieval.__main__ import main as cli_main
 from retrieval.answer import answer_question
 from retrieval.config import RetrievalError, Settings
+from retrieval.confidence import assess_confidence
 
 SOURCES = [
     {
@@ -36,6 +38,8 @@ EVIDENCE = {
     "sources": SOURCES,
     "subgraph": {"nodes": [{"id": "paper:1"}], "edges": []},
     "warnings": ["Resultados limitados às fontes recuperadas."],
+    "queries": [{"stage": "Teste", "cypher": "RETURN $value", "parameters": {"value": 1}}],
+    "paths": [],
 }
 
 
@@ -160,6 +164,9 @@ class AnswerTests(unittest.TestCase):
                 "sources": SOURCES,
                 "subgraph": EVIDENCE["subgraph"],
                 "warnings": EVIDENCE["warnings"],
+                "queries": EVIDENCE["queries"],
+                "paths": EVIDENCE["paths"],
+                "confidence": assess_confidence(result["answer"], SOURCES, abstained=False),
             },
         )
 
@@ -171,6 +178,9 @@ class AnswerTests(unittest.TestCase):
         prompt = json.loads(request["input"])
         self.assertEqual(prompt["question"], "O que foi avaliado?")
         self.assertEqual(prompt["sources"], SOURCES)
+        self.assertEqual(prompt["paths"], EVIDENCE["paths"])
+        self.assertNotIn("queries", prompt)
+        self.assertNotIn("confidence", prompt)
 
     def test_no_evidence_abstains_without_api_key_or_llm_call(self) -> None:
         self.settings = Settings(
@@ -196,8 +206,34 @@ class AnswerTests(unittest.TestCase):
         )
         self.assertEqual(result["sources"], [])
         self.assertEqual(result["subgraph"], evidence["subgraph"])
+        self.assertEqual(result["confidence"]["level"], "low")
+        self.assertEqual(result["queries"], [])
         self.openai_client.assert_not_called()
         self.driver.close.assert_called_once_with()
+
+    def test_paths_reach_generator_and_public_json_without_changing_confidence(self):
+        evidence = deepcopy(EVIDENCE)
+        evidence["sources"].append({**deepcopy(SOURCES[0]), "citation_id": "S2", "paper_id": "second"})
+        nodes = [{"id": "paper:1", "properties": {"abstract": "Abstract do primeiro artigo."}},
+                 {"id": "author:shared", "properties": {"name": "Autor"}},
+                 {"id": "paper:second", "properties": {"abstract": "Abstract do segundo artigo."}}]
+        evidence["subgraph"]["nodes"] = nodes
+        evidence["paths"] = [{"source": "S1", "target": "S2", "length": 2,
+                              "nodes": nodes, "edges": []}]
+        self.retrieve.return_value = evidence
+        result = answer_question("Pergunta?")
+        context = json.loads(self.client.responses.create.call_args.kwargs["input"])
+        self.assertEqual(context["paths"], [{
+            "source": "S1", "target": "S2", "length": 2,
+            "node_ids": [node["id"] for node in nodes], "edges": [],
+        }])
+        self.assertEqual(context["subgraph"]["nodes"], nodes)
+        self.assertEqual(result["paths"], evidence["paths"])
+        self.assertEqual(result["confidence"]["level"], "low")
+        self.assertEqual(json.loads(json.dumps(result))["queries"], evidence["queries"])
+        instructions = self.client.responses.create.call_args.kwargs["instructions"]
+        self.assertIn("conexões estruturais", instructions)
+        self.assertIn("connector", instructions)
 
     def test_missing_api_key_is_checked_only_when_sources_exist(self) -> None:
         self.settings = Settings(
@@ -259,6 +295,8 @@ class AnswerTests(unittest.TestCase):
         self.assertIn("Não encontrei evidências suficientes", result["answer"])
         self.assertEqual(result["sources"], SOURCES)
         self.assertEqual(result["subgraph"], EVIDENCE["subgraph"])
+        self.assertEqual(result["queries"], EVIDENCE["queries"])
+        self.assertEqual(result["confidence"]["level"], "low")
         self.assertEqual(len(result["warnings"]), len(EVIDENCE["warnings"]) + 1)
         self.assertEqual(
             EVIDENCE["warnings"], ["Resultados limitados às fontes recuperadas."]

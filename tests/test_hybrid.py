@@ -74,6 +74,7 @@ class HybridTests(unittest.TestCase):
             hybrid.DIRECT_QUERY: [{"paper_id": "b", "direct_matches": 1}],
             hybrid.EXPAND_QUERY: [{"paper_id": "c", "shared_connections": 1}],
             hybrid.FACTS_QUERY: [fact("b", "USES_METHOD", "Method", "GraphRAG")],
+            hybrid.PATHS_QUERY: [],
         }
         session.run.side_effect = lambda query, **params: [Record(r) for r in responses[query]]
         driver = Mock()
@@ -145,7 +146,12 @@ class HybridTests(unittest.TestCase):
         driver.session.return_value.__exit__ = Mock(return_value=False)
         encoder = Mock()
         result = hybrid.retrieve(driver, "neo4j", encoder, "GraphRAG", 6)
-        self.assertEqual(result, {"sources": [], "subgraph": {"nodes": [], "edges": []}, "warnings": []})
+        self.assertEqual(result["sources"], [])
+        self.assertEqual(result["subgraph"], {"nodes": [], "edges": []})
+        self.assertEqual(result["warnings"], [])
+        self.assertEqual(result["paths"], [])
+        self.assertEqual([q["cypher"] for q in result["queries"]],
+                         [hybrid.PAPERS_QUERY.strip()])
         encoder.encode.assert_not_called()
 
     @patch("retrieval.hybrid.check_index")

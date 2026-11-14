@@ -1,6 +1,7 @@
 """Opt-in tests: TEST_NEO4J_* must describe an isolated test service."""
 
 import os
+import json
 import unittest
 import uuid
 from copy import deepcopy
@@ -9,6 +10,7 @@ from neo4j import GraphDatabase
 
 from src.import_graph import _write_paper, import_papers
 from tests.test_graph_import import fixture
+from retrieval.hybrid import PATHS_QUERY, connect_sources
 
 
 @unittest.skipUnless(
@@ -45,6 +47,79 @@ class GraphIntegrationTests(unittest.TestCase):
                 token=self.token,
             ).consume()
         self.driver.close()
+
+    def _path_evidence(self, *suffixes):
+        return {
+            "sources": [{"paper_id": self.token + suffix, "citation_id": f"S{i}"}
+                        for i, suffix in enumerate(suffixes, start=1)],
+            "subgraph": {"nodes": [], "edges": []},
+        }
+
+    def test_shortest_path_prefers_two_hops_and_preserves_author_direction(self):
+        with self.driver.session(database=self.database) as session:
+            session.run("""
+                CREATE (a:Paper {id: $token + 'a'}), (b:Paper {id: $token + 'b'}),
+                       (c:Paper {id: $token + 'c'}),
+                       (author:Author {name: $token + 'author'}),
+                       (x:Concept {name: $token + 'x'}),
+                       (y:Dataset {name: $token + 'y'})
+                CREATE (author)-[:AUTHORED]->(a), (author)-[:AUTHORED]->(b),
+                       (a)-[:HAS_CONCEPT]->(x), (c)-[:HAS_CONCEPT]->(x),
+                       (c)-[:EVALUATED_ON]->(y), (b)-[:EVALUATED_ON]->(y),
+                       (a)-[:CITES]->(b)
+            """, token=self.token).consume()
+            evidence = self._path_evidence("a", "b")
+            original_sources = deepcopy(evidence["sources"])
+            paths = connect_sources(session, evidence)
+            self.assertEqual(len(paths), 1)
+            path = paths[0]
+            self.assertEqual(path["length"], 2)
+            self.assertEqual((path["source"], path["target"]), ("S1", "S2"))
+            self.assertEqual([n["label"] for n in path["nodes"]], ["Paper", "Author", "Paper"])
+            author_id = path["nodes"][1]["id"]
+            self.assertTrue(all(e["source"] == author_id for e in path["edges"]))
+            self.assertTrue(all(e["type"] == "AUTHORED" for e in path["edges"]))
+            self.assertEqual(evidence["sources"], original_sources)
+            self.assertNotIn("db_id", json.dumps(paths))
+            # A tie may select either author, while the minimum length stays fixed.
+            session.run("""
+                MATCH (a:Paper {id:$a}), (b:Paper {id:$b})
+                CREATE (x:Author {name:$name})-[:AUTHORED]->(a), (x)-[:AUTHORED]->(b)
+            """, a=self.token + "a", b=self.token + "b", name=self.token + "tie").consume()
+            tied = connect_sources(session, evidence)
+            self.assertEqual(len(tied), 1)
+            self.assertEqual(tied[0]["length"], 2)
+            self.assertEqual(len(evidence["subgraph"]["nodes"]),
+                             len({n["id"] for n in evidence["subgraph"]["nodes"]}))
+
+    def test_four_hop_limit_connectors_and_disconnected_sources(self):
+        with self.driver.session(database=self.database) as session:
+            session.run("""
+                CREATE (a:Paper {id:$token + 'a'}), (b:Paper {id:$token + 'b'}),
+                       (c:Paper {id:$token + 'c'}), (d:Paper {id:$token + 'd'}),
+                       (mid:Paper {id:$token + 'mid', title:'Artigo intermediário'}),
+                       (x:Concept {name:$token + 'x'}),
+                       (y:Concept {name:$token + 'y'}),
+                       (z:Concept {name:$token + 'z'})
+                CREATE (a)-[:HAS_CONCEPT]->(x), (mid)-[:HAS_CONCEPT]->(x),
+                       (mid)-[:HAS_CONCEPT]->(y), (b)-[:HAS_CONCEPT]->(y),
+                       (b)-[:HAS_CONCEPT]->(z), (d)-[:HAS_CONCEPT]->(z)
+            """, token=self.token).consume()
+            evidence = self._path_evidence("a", "b", "c")
+            paths = connect_sources(session, evidence)
+            self.assertEqual(len(paths), 1)
+            self.assertEqual(paths[0]["length"], 4)
+            connectors = [n for n in paths[0]["nodes"] if n.get("connector")]
+            self.assertEqual([n["properties"]["id"] for n in connectors], [self.token + "mid"])
+            self.assertEqual(len(evidence["sources"]), 3)
+            for _ in range(2):
+                connect_sources(session, evidence)
+            graph = evidence["subgraph"]
+            self.assertEqual(len(graph["nodes"]), 5)
+            self.assertEqual(len(graph["edges"]), 4)
+            self.assertEqual(list(session.run(PATHS_QUERY, pairs=[{
+                "source_id": self.token + "a", "target_id": self.token + "d",
+            }])), [])
 
     def test_reconcile_rollback_and_preserve_unrelated(self):
         import_papers(self.driver, self.database, [self.paper])

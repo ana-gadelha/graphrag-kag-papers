@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from neo4j import GraphDatabase
 
 from retrieval.embeddings import load_encoder
-from retrieval.hybrid import retrieve
+from retrieval.hybrid import PATHS_QUERY, retrieve
 from retrieval.index_embeddings import index_papers
 
 
@@ -48,6 +48,19 @@ def main() -> None:
                 f"S{i}" for i in range(1, 7)
             ]
             nodes = {node["id"]: node for node in result["subgraph"]["nodes"]}
+            assert result["queries"][0]["cypher"].startswith("SHOW INDEXES")
+            assert result["queries"][-1]["cypher"] == PATHS_QUERY.strip()
+            citations = {source["citation_id"] for source in sources}
+            for path in result["paths"]:
+                assert path["source"] in citations and path["target"] in citations
+                assert 1 <= path["length"] <= 4
+                assert len(path["nodes"]) == path["length"] + 1
+                assert len(path["edges"]) == path["length"]
+                assert all(node["id"] in nodes for node in path["nodes"])
+            vector_trace = next(q for q in result["queries"] if q["stage"] == "Busca vetorial")
+            assert vector_trace["parameters"]["embedding"] == {
+                "dimensions": 384, "values_omitted": True,
+            }
             for edge in result["subgraph"]["edges"]:
                 assert edge["source"] in nodes and edge["target"] in nodes
                 if edge["type"] == "AUTHORED":
@@ -65,7 +78,8 @@ def main() -> None:
                     {source["paper_id"] for source in sources}
                 )
             checks.append(
-                {"question": question, "sources": len(sources), "nodes": len(nodes)}
+                {"question": question, "sources": len(sources), "nodes": len(nodes),
+                 "paths": len(result["paths"]), "queries": len(result["queries"])}
             )
     print(
         json.dumps(

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
+from copy import deepcopy
+from itertools import combinations
 from typing import Any
 from urllib.parse import quote
 
@@ -11,7 +13,7 @@ from src.common import comparison_key
 
 from .config import RetrievalError
 from .embeddings import (
-    EMBEDDING_MODEL, check_index, content_hash, validate_vector,
+    EMBEDDING_MODEL, INDEX_INFO_QUERY, check_index, content_hash, validate_vector,
 )
 
 
@@ -67,6 +69,61 @@ RETURN DISTINCT p.id AS paper_id, type(r) AS type,
        startNode(r) = p AS paper_is_source
 ORDER BY paper_id, type, entity_label, entity_name
 """
+
+
+PATH_SOURCE_LIMIT = 6
+
+PATHS_QUERY = """
+UNWIND $pairs AS pair
+MATCH (a:Paper {id: pair.source_id}), (b:Paper {id: pair.target_id})
+MATCH path = shortestPath(
+    (a)-[:AUTHORED|HAS_CONCEPT|PROPOSES|USES_METHOD|EVALUATED_ON*1..4]-(b)
+)
+WHERE all(n IN nodes(path) WHERE n:Paper OR n:Author OR n:Concept OR n:Method OR n:Dataset)
+RETURN pair.source_id AS source_id, pair.target_id AS target_id,
+       length(path) AS length,
+       [n IN nodes(path) | {
+           db_id: elementId(n), label: labels(n)[0],
+           key: CASE WHEN n:Paper THEN n.id ELSE n.name END,
+           title: n.title, year: n.year, url: n.url
+       }] AS path_nodes,
+       [r IN relationships(path) | {
+           source: elementId(startNode(r)), target: elementId(endNode(r)), type: type(r)
+       }] AS path_edges
+ORDER BY source_id, target_id
+"""
+
+_QUERY_STAGES = {
+    INDEX_INFO_QUERY: "Verificação do índice vetorial",
+    PAPERS_QUERY: "Leitura dos artigos",
+    VECTOR_QUERY: "Busca vetorial",
+    ENTITIES_QUERY: "Leitura das entidades",
+    DIRECT_QUERY: "Correspondências diretas",
+    EXPAND_QUERY: "Expansão no grafo",
+    FACTS_QUERY: "Relações das fontes",
+    PATHS_QUERY: "Caminhos mínimos entre fontes",
+}
+
+
+class _TracedSession:
+    """Registra somente Cypher e parâmetros de consulta, sem dados da conexão."""
+
+    def __init__(self, session: Any) -> None:
+        self.session = session
+        self.queries: list[dict] = []
+
+    def run(self, query: str, **parameters: Any) -> Any:
+        diagnostic = deepcopy(parameters)
+        if "embedding" in diagnostic:
+            diagnostic["embedding"] = {
+                "dimensions": len(parameters["embedding"]), "values_omitted": True,
+            }
+        result = self.session.run(query, **parameters)
+        self.queries.append({
+            "stage": _QUERY_STAGES[query], "cypher": query.strip(),
+            "parameters": diagnostic,
+        })
+        return result
 
 
 def _records(session: Any, query: str, **parameters: Any) -> list[dict]:
@@ -159,13 +216,59 @@ def assemble_evidence(
             "warnings": warnings if sources else []}
 
 
+def connect_sources(session: Any, evidence: dict) -> list[dict]:
+    """Materializa caminhos e conectores sem promover novos artigos a fontes."""
+    sources = evidence["sources"]
+    pairs = [
+        {"source_id": a["paper_id"], "target_id": b["paper_id"]}
+        for a, b in combinations(sources[:PATH_SOURCE_LIMIT], 2)
+    ]
+    if not pairs:
+        return []
+    citations = {source["paper_id"]: source["citation_id"] for source in sources}
+    graph = evidence["subgraph"]
+    nodes = {node["id"]: node for node in graph["nodes"]}
+    edges = {(edge["source"], edge["type"], edge["target"]): edge
+             for edge in graph["edges"]}
+    paths = []
+    for row in _records(session, PATHS_QUERY, pairs=pairs):
+        path_nodes = []
+        ids = {}
+        for raw in row["path_nodes"]:
+            label, key = raw["label"], raw["key"]
+            node_id = _node_id(label, key)
+            ids[raw["db_id"]] = node_id
+            if node_id not in nodes:
+                properties = ({"id": key, **{k: raw.get(k) for k in ("title", "year", "url")}}
+                              if label == "Paper" else {"name": key})
+                nodes[node_id] = {
+                    "id": node_id, "label": label, "properties": properties,
+                    "connector": label == "Paper" and key not in citations,
+                }
+            path_nodes.append(nodes[node_id])
+        path_edges = []
+        for raw in row["path_edges"]:
+            edge = {"source": ids[raw["source"]], "target": ids[raw["target"]],
+                    "type": raw["type"]}
+            edges[(edge["source"], edge["type"], edge["target"])] = edge
+            path_edges.append(edge)
+        paths.append({
+            "source": citations[row["source_id"]], "target": citations[row["target_id"]],
+            "length": row["length"], "nodes": path_nodes, "edges": path_edges,
+        })
+    graph.update(nodes=list(nodes.values()), edges=list(edges.values()))
+    return paths
+
+
 def retrieve(driver: Any, database: str, encoder: Any, question: str, top_k: int) -> dict:
     """Consulta o índice e o grafo, verifica embeddings e materializa o contexto."""
-    with driver.session(database=database, default_access_mode="READ") as session:
+    with driver.session(database=database, default_access_mode="READ") as raw_session:
+        session = _TracedSession(raw_session)
         check_index(session)
         rows = _records(session, PAPERS_QUERY)
         if not rows:
-            return {"sources": [], "subgraph": {"nodes": [], "edges": []}, "warnings": []}
+            return {"sources": [], "subgraph": {"nodes": [], "edges": []},
+                    "warnings": [], "queries": session.queries, "paths": []}
         papers = {p["id"]: p for p in rows}
         for paper in rows:
             try:
@@ -203,5 +306,7 @@ def retrieve(driver: Any, database: str, encoder: Any, question: str, top_k: int
         ranked = ranked[:top_k]
         facts = (_records(session, FACTS_QUERY, paper_ids=[r["paper_id"] for r in ranked])
                  if ranked else [])
-        # DISTINCT in Cypher plus deterministic sorting make evidence stable across runs.
-        return assemble_evidence(ranked, papers, facts)
+        evidence = assemble_evidence(ranked, papers, facts)
+        evidence["paths"] = connect_sources(session, evidence)
+        evidence["queries"] = session.queries
+        return evidence

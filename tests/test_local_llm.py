@@ -13,6 +13,7 @@ from openai import OpenAI
 
 from retrieval.answer import _generate_answer, answer_question
 from retrieval.config import OPENAI_BASE_URL, LLMSettings, RetrievalError, Settings
+from retrieval.confidence import assess_confidence
 
 ENV = {
     "NEO4J_URI": "bolt://localhost:7687",
@@ -32,6 +33,7 @@ EVIDENCE = {
     ],
     "subgraph": {"nodes": [], "edges": []},
     "warnings": [],
+    "paths": [],
 }
 TEXT = "O paper contém um abstract sintético [S1]."
 
@@ -385,7 +387,10 @@ class LocalLLMProtocolTests(unittest.TestCase):
             sdk_transport(chat_payload()),
         ):
             result = answer_question("  Pergunta?  ")
-        self.assertEqual(result, {"question": "Pergunta?", "answer": TEXT, **EVIDENCE})
+        self.assertEqual(result, {
+            "question": "Pergunta?", "answer": TEXT, **EVIDENCE, "queries": [],
+            "confidence": assess_confidence(TEXT, EVIDENCE["sources"], abstained=False),
+        })
         driver.close.assert_called_once_with()
 
     def test_no_evidence_does_not_require_a_valid_local_llm_configuration(self):

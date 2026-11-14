@@ -210,6 +210,13 @@ Documentação dos servidores: [LM Studio](https://lmstudio.ai/docs/developer/op
    representa relevância relativa e pode não ser decrescente na ordem final.
 5. **Evidências:** seleciona seis papers por padrão e recupera seus metadados,
    abstracts e relações. Esses mesmos dados formam o contexto e o subgrafo.
+   Depois, calcula caminhos mínimos entre pares das primeiras seis fontes (até
+   quinze pares), sem alterar a seleção nem a ordem dos resultados. Percorre
+   nos dois sentidos as cinco relações do modelo, até quatro saltos. Um caminho
+   pode incluir artigos intermediários, marcados como `connector: true`, que não
+   recebem uma citação nem se tornam fontes adicionais. Empates podem retornar
+   qualquer caminho mínimo. Não encontrar caminho significa ausência de conexão
+   nesse limite, não necessariamente desconexão no grafo inteiro.
 6. **Resposta:** envia pergunta e evidências ao LLM configurado, pedindo
    resposta em português com referências `[S1]`, `[S2]`, etc. Abstracts e pergunta
    são tratados como dados, sem autorização para executar suas instruções.
@@ -266,6 +273,47 @@ um inteiro de 1 a 20. O retorno contém apenas valores serializáveis em JSON:
 | `subgraph.nodes` | Nós com `id`, `label` e `properties` |
 | `subgraph.edges` | Arestas com `source`, `target` e `type` |
 | `warnings` | Limitações do material recuperado |
+| `queries` | Consultas executadas, em ordem, com `stage`, `cypher` e `parameters` |
+| `paths` | Caminhos mínimos com `source`, `target`, `length`, `nodes` e `edges` |
+| `confidence` | Heurística com `level`, `method` e `reason` |
+
+Os extremos `source` e `target` de cada caminho são IDs de citação, como `S1`
+e `S2`. Os nós estão na ordem do percurso e seguem o formato do subgrafo;
+as arestas mantêm a direção original das relações. Nós e arestas intermediários
+são incorporados ao subgrafo com deduplicação. Artigos intermediários que não
+estão nas fontes recebem `connector: true` e apenas metadados de identificação.
+Compartilhar uma entidade indica uma conexão estrutural, não equivalência entre
+resultados científicos. O gerador recebe os caminhos com `node_ids` ordenados,
+resolvidos pelos nós do subgrafo, para evitar repetir abstracts em cada par.
+Não recebe o diagnóstico das consultas nem a confiança calculada posteriormente.
+
+`queries` inclui a verificação do índice e somente as consultas efetivamente
+executadas. A consulta de caminhos é dispensada com menos de duas fontes.
+O parâmetro `embedding` é resumido como
+`{"dimensions": 384, "values_omitted": true}`; para reproduzir a busca é necessário
+gerar o vetor da pergunta com o mesmo encoder. Os demais parâmetros de consulta
+são preservados; credenciais e dados da conexão não fazem parte do registro.
+Respostas de abstenção preservam consultas, fontes e caminhos disponíveis.
+Erros operacionais continuam sendo sinalizados por `RetrievalError`.
+
+### Confiança heurística nas evidências
+
+O método `cited-channel-agreement-v1` considera apenas fontes distintas citadas
+na resposta. `level` usa os valores `low`, `medium` e `high`:
+
+| Nível | Regra |
+|---|---|
+| Alta (`high`) | Pelo menos duas fontes citadas, todas recuperadas pelos canais vetorial e grafo |
+| Média (`medium`) | Não é alta, mas uma fonte citada veio dos dois canais ou há pelo menos duas fontes citadas |
+| Baixa (`low`) | Demais casos, incluindo abstenção e ausência de fontes |
+
+Essa classificação não é uma probabilidade calibrada de acerto nem verifica a
+veracidade ou o suporte de cada afirmação. Os canais compartilham informações:
+a expansão no grafo também pode partir de resultados vetoriais. A convergência
+é um indicador operacional, não evidência independente de correção. Citações
+repetidas contam uma vez; fontes não citadas e caminhos mínimos não elevam o
+nível. O LLM não escolhe a confiança. O RRF permanece uma pontuação de relevância
+relativa **por fonte**, separada dessa classificação.
 
 Cada fonte inclui `citation_id`, `paper_id`, `title`, `authors`, `year`, `url`,
 `abstract`, `relations`, `retrieved_by`, `ranks` e `score`. Cada relação tem
