@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
@@ -135,6 +136,86 @@ class AdapterTests(unittest.TestCase):
 class AppFlowTests(unittest.TestCase):
     def _app(self) -> AppTest:
         return AppTest.from_file(str(APP_PATH)).run()
+
+    def test_displays_queries_confidence_rrf_paths_and_connector_labels(self):
+        result = deepcopy(BACKEND_RESULT)
+        result["sources"][0].update(score=2 / 61, retrieved_by=["vector", "graph"])
+        result["confidence"] = {
+            "level": "medium", "method": "cited-channel-agreement-v1",
+            "reason": "Uma fonte citada nos dois canais.",
+        }
+        result["queries"] = [{
+            "stage": "Caminhos mínimos entre fontes", "cypher": "MATCH path = shortestPath(...)",
+            "parameters": {"pairs": [{"source_id": "a", "target_id": "b"}]},
+        }]
+        connector = {
+            "id": "paper:connector", "label": "Paper", "connector": True,
+            "properties": {"title": "Artigo intermediário"},
+        }
+        second_source = {**deepcopy(result["sources"][0]), "citation_id": "S2",
+                         "paper_id": "second", "title": "Segundo artigo"}
+        result["sources"].append(second_source)
+        concept = {"id": "concept:shared", "label": "Concept", "properties": {"name": "Conceito"}}
+        endpoint = {"id": "paper:second", "label": "Paper", "properties": {"title": "Segundo artigo"}}
+        result["subgraph"]["nodes"].extend([connector, concept, endpoint])
+        result["subgraph"]["edges"].extend([
+            {"source": connector["id"], "target": "dataset:HotpotQA", "type": "EVALUATED_ON"},
+            {"source": connector["id"], "target": concept["id"], "type": "HAS_CONCEPT"},
+            {"source": endpoint["id"], "target": concept["id"], "type": "HAS_CONCEPT"},
+        ])
+        result["paths"] = [{
+            "source": "S1", "target": "S2", "length": 4,
+            "nodes": result["subgraph"]["nodes"], "edges": result["subgraph"]["edges"],
+        }]
+        with patch("app_integration.answer_question", return_value=result):
+            app = self._app()
+            app.text_input[0].set_value("Pergunta").run()
+            app.button[0].click().run()
+        self.assertFalse(app.exception)
+        self.assertIn("Uma fonte citada nos dois canais.", " ".join(m.value for m in app.markdown))
+        self.assertIn("Relevância relativa (RRF): 0.032787", [c.value for c in app.caption])
+        self.assertIn("Canais de recuperação: vetorial, grafo", [c.value for c in app.caption])
+        self.assertEqual([c.value for c in app.code], [result["queries"][0]["cypher"]])
+        self.assertIn("[S1] ↔ [S2] · 4 saltos", [m.value for m in app.markdown])
+        self.assertIn("Artigo intermediário (conector)", app.text[0].value)
+        graph = app.get("graphviz_chart")[0].proto.spec
+        self.assertIn("Artigo intermediário (conector)", graph)
+        adapted = adaptar_resultado(result)
+        for key in ("queries", "paths", "confidence"):
+            self.assertEqual(adapted[key], result[key])
+
+    def test_no_path_has_distinct_messages_for_one_source_and_disconnection(self):
+        for count, expected in (
+            (1, "São necessárias pelo menos duas fontes para calcular conexões."),
+            (2, "Nenhuma conexão encontrada entre as fontes no limite de quatro saltos."),
+        ):
+            result = deepcopy(BACKEND_RESULT)
+            if count == 2:
+                result["sources"].append({**deepcopy(result["sources"][0]), "citation_id": "S2",
+                                          "paper_id": "second"})
+            with self.subTest(count=count), patch("app_integration.answer_question", return_value=result):
+                app = self._app()
+                app.text_input[0].set_value("Pergunta").run()
+                app.button[0].click().run()
+            self.assertFalse(app.exception)
+            self.assertIn(expected, [i.value for i in app.info])
+
+    def test_abstention_preserves_trace_and_shows_low_confidence(self):
+        result = {
+            "answer": "Não encontrei evidências suficientes.", "sources": [],
+            "subgraph": {"nodes": [], "edges": []}, "warnings": [], "paths": [],
+            "queries": [{"stage": "Leitura dos artigos", "cypher": "MATCH (p:Paper) RETURN p",
+                         "parameters": {}}],
+            "confidence": {"level": "low", "reason": "O sistema se absteve.",
+                           "method": "cited-channel-agreement-v1"},
+        }
+        with patch("app_integration.answer_question", return_value=result):
+            app = self._app()
+            app.text_input[0].set_value("Pergunta").run()
+            app.button[0].click().run()
+        self.assertFalse(app.exception)
+        self.assertIn("**Baixa** — O sistema se absteve.", [m.value for m in app.markdown])
+        self.assertEqual(app.code[0].value, result["queries"][0]["cypher"])
 
     def test_query_runs_only_on_button_and_normal_reruns_preserve_result(self) -> None:
         app = AppTest.from_file(str(APP_PATH))

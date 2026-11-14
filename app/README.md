@@ -28,6 +28,23 @@ falha.
 - O subgrafo direcionado, com cores para `Paper`, `Author`, `Concept`, `Method`
   e `Dataset`.
 - Avisos sobre limites das evidências recuperadas.
+- O nível de **confiança heurística nas evidências**, sua justificativa e a
+  indicação de que ele não representa probabilidade de acerto. Usa apenas as
+  fontes distintas citadas: alta com duas ou mais, todas nos dois canais; média
+  com uma nos dois canais ou duas ou mais citadas; baixa nos demais casos e na
+  abstenção. As regras completas estão no [retrieval](../retrieval/README.md#confiança-heurística-nas-evidências).
+- A relevância relativa RRF de cada fonte e seus canais de recuperação.
+- **Conexões entre as fontes**, calculadas com Shortest Path entre as primeiras
+  seis fontes, em até quatro saltos. Artigos intermediários aparecem como
+  conectores, sem se tornarem fontes adicionais. As setas na sequência indicam
+  a ordem do percurso; o desenho do grafo preserva a direção das relações.
+- O expansor **Consultas Cypher executadas**, incluindo verificação do índice,
+  parâmetros de diagnóstico e consulta dos caminhos quando executada. O vetor
+  da pergunta aparece apenas com dimensão e indicação de valores omitidos.
+
+Com menos de duas fontes, a tela informa que não há fontes suficientes para
+calcular conexões. Caso contrário, a ausência de caminhos é informada com o
+limite de quatro saltos. A abstenção mantém o diagnóstico disponível.
 
 Erros de recuperação conhecidos são apresentados com a mensagem segura do
 backend. Erros inesperados exibem uma mensagem genérica para não revelar dados

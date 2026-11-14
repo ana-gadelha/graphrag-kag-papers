@@ -101,7 +101,10 @@ python -m retrieval "Quais trabalhos usam HotpotQA?"
 ```
 
 A interface chama `answer_question()` diretamente no processo Python. Mostra a
-resposta, citações `[S1]`, fontes com links, avisos e o subgrafo recuperado. Não há
+resposta, citações `[S1]`, fontes com links e relevância RRF, avisos e o subgrafo
+recuperado. Também exibe consultas Cypher executadas, confiança heurística nas
+evidências e caminhos mínimos entre as primeiras seis fontes, até quatro saltos.
+A confiança não representa probabilidade de acerto. Não há
 servidor HTTP separado. Consultas sem evidência suficiente retornam abstenção;
 problemas de conexão, configuração ou geração são apresentados como erros.
 

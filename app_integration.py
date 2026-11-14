@@ -73,12 +73,16 @@ def adaptar_resultado(result: dict[str, Any]) -> dict[str, Any]:
             properties.get("title"),
             _text(properties.get("name"), node_id),
         )
+        connector = node.get("connector") is True
+        if connector:
+            display_name += " (conector)"
         nos.append(
             {
                 "id": node_id,
                 "label": display_name,
                 "tipo": _text(node.get("label"), "Unknown"),
                 "properties": properties,
+                "connector": connector,
             }
         )
 
@@ -105,6 +109,9 @@ def adaptar_resultado(result: dict[str, Any]) -> dict[str, Any]:
         "nos": nos,
         "arestas": arestas,
         "warnings": warnings,
+        "queries": result.get("queries", []),
+        "paths": result.get("paths", []),
+        "confidence": _mapping(result.get("confidence")),
     }
 
 
