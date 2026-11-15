@@ -230,3 +230,13 @@ __pycache__/
 # Arquivos gerados pelo pipeline
 output/*.json
 !output/.gitkeep
+
+# Inferência local e artefatos de avaliação (podem conter perguntas/contexto)
+output/llm_cache/
+output/evaluation/
+
+# Evidências locais de automação do navegador
+.playwright-cli/
+
+# Rodadas reais e snapshots de validacao local
+output/real_validation_*/

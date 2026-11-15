@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from pathlib import Path
 import math
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -32,6 +32,7 @@ class LLMSettings:
     api: str = "responses"
     timeout: float = 30.0
     max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS
+    max_retries: int = 0
 
     def __post_init__(self) -> None:
         if self.api not in {"responses", "chat_completions"}:
@@ -43,9 +44,12 @@ class LLMSettings:
         try:
             parsed = urlsplit(self.base_url)
             valid_url = (
-                parsed.scheme in {"http", "https"} and parsed.hostname
-                and not parsed.username and not parsed.password
-                and not parsed.query and not parsed.fragment
+                parsed.scheme in {"http", "https"}
+                and parsed.hostname
+                and not parsed.username
+                and not parsed.password
+                and not parsed.query
+                and not parsed.fragment
             )
             parsed.port  # Valida também a sintaxe e o intervalo da porta.
         except ValueError:
@@ -56,13 +60,25 @@ class LLMSettings:
                 "query ou fragmento, incluindo o prefixo da API (ex.: /v1)."
             )
         if not math.isfinite(self.timeout) or self.timeout <= 0:
-            raise RetrievalError("RETRIEVAL_LLM_TIMEOUT deve ser um número positivo e finito.")
+            raise RetrievalError(
+                "RETRIEVAL_LLM_TIMEOUT deve ser um número positivo e finito."
+            )
         if type(self.max_output_tokens) is not int or self.max_output_tokens <= 0:
-            raise RetrievalError("RETRIEVAL_LLM_MAX_OUTPUT_TOKENS deve ser um inteiro positivo.")
+            raise RetrievalError(
+                "RETRIEVAL_LLM_MAX_OUTPUT_TOKENS deve ser um inteiro positivo."
+            )
+        if type(self.max_retries) is not int or not 0 <= self.max_retries <= 3:
+            raise RetrievalError(
+                "RETRIEVAL_LLM_MAX_RETRIES deve ser um inteiro entre 0 e 3."
+            )
 
     @classmethod
     def from_environment(
-        cls, environment: dict[str, str], *, default_model: str, default_key: str | None,
+        cls,
+        environment: dict[str, str],
+        *,
+        default_model: str,
+        default_key: str | None,
     ) -> "LLMSettings":
         def value(name: str) -> str:
             return (environment.get(name) or "").strip()
@@ -74,28 +90,41 @@ class LLMSettings:
                 "Defina RETRIEVAL_LLM_MODEL com o identificador do modelo no servidor."
             )
         try:
-            timeout = float(value("RETRIEVAL_LLM_TIMEOUT") or ("120" if base_url else "30"))
+            timeout = float(
+                value("RETRIEVAL_LLM_TIMEOUT") or ("120" if base_url else "30")
+            )
         except ValueError:
             raise RetrievalError(
                 "RETRIEVAL_LLM_TIMEOUT deve ser um número positivo e finito."
             ) from None
         try:
             max_output_tokens = int(
-                value("RETRIEVAL_LLM_MAX_OUTPUT_TOKENS") or str(DEFAULT_MAX_OUTPUT_TOKENS)
+                value("RETRIEVAL_LLM_MAX_OUTPUT_TOKENS")
+                or str(DEFAULT_MAX_OUTPUT_TOKENS)
             )
         except ValueError:
             raise RetrievalError(
                 "RETRIEVAL_LLM_MAX_OUTPUT_TOKENS deve ser um inteiro positivo."
             ) from None
+        try:
+            max_retries = int(value("RETRIEVAL_LLM_MAX_RETRIES") or "0")
+        except ValueError:
+            raise RetrievalError(
+                "RETRIEVAL_LLM_MAX_RETRIES deve ser um inteiro entre 0 e 3."
+            ) from None
         # Um endereço alternativo nunca herda a chave destinada à OpenAI.
-        api_key = value("RETRIEVAL_LLM_API_KEY") or ("local" if base_url else default_key)
+        api_key = value("RETRIEVAL_LLM_API_KEY") or (
+            "local" if base_url else default_key
+        )
         return cls(
             model=model or default_model,
             api_key=api_key,
             base_url=base_url or OPENAI_BASE_URL,
-            api=value("RETRIEVAL_LLM_API") or ("chat_completions" if base_url else "responses"),
+            api=value("RETRIEVAL_LLM_API")
+            or ("chat_completions" if base_url else "responses"),
             timeout=timeout,
             max_output_tokens=max_output_tokens,
+            max_retries=max_retries,
         )
 
 
@@ -117,7 +146,8 @@ class Settings:
             return self.llm
         if self.llm_environment is not None:
             return LLMSettings.from_environment(
-                self.llm_environment, default_model=self.openai_model,
+                self.llm_environment,
+                default_model=self.openai_model,
                 default_key=self.openai_api_key,
             )
         return LLMSettings(model=self.openai_model, api_key=self.openai_api_key)
@@ -147,9 +177,7 @@ class Settings:
         ]
         if missing:
             joined = ", ".join(missing)
-            raise RetrievalError(
-                f"Configuração Neo4j incompleta; defina: {joined}."
-            )
+            raise RetrievalError(f"Configuração Neo4j incompleta; defina: {joined}.")
 
         default_model = _env("OPENAI_MODEL") or "gpt-4.1-mini"
         default_key = _env("OPENAI_API_KEY") or None
@@ -161,8 +189,11 @@ class Settings:
             openai_model=default_model,
             openai_api_key=default_key,
             # Captura a configuração sem exigir um LLM para indexar ou abster-se.
-            llm_environment={name: value for name, value in os.environ.items()
-                             if name.startswith("RETRIEVAL_LLM_")},
+            llm_environment={
+                name: value
+                for name, value in os.environ.items()
+                if name.startswith("RETRIEVAL_LLM_")
+            },
         )
 
 
