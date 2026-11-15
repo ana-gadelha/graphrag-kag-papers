@@ -3,7 +3,7 @@
 Projeto Final da disciplina **Tendências em Ciência da Computação** – UNIPÊ
 Professor: **Ricardo Roberto de Lima** | Semestre: 2026 (Outubro – Dezembro)
 
-> **Status:** corpus, pipeline, retrieval e interface implementados. A geração depende de um provedor LLM disponível e com quota.
+> **Status:** implementação de extração automática, entidades canônicas, Cypher gerado com validação, respostas com evidências e grafo interativo. Avaliação empírica e revisão humana permanecem etapas explícitas; veja a [matriz de requisitos](docs/ADEQUACAO_REQUISITOS.md).
 
 ---
 
@@ -48,9 +48,9 @@ Papers  →  1. Extração (NER/RE)  →  2. Grafo no Neo4j
 
 - **Python** – linguagem principal
 - **Neo4j** (Desktop ou Aura Free) – banco de dados de grafos
-- **Driver Neo4j + Cypher parametrizado** – recuperação e expansão do grafo
+- **Driver Neo4j + Cypher parametrizado** – recuperação fixa e Cypher gerado pelo LLM, validado por gramática Lark antes de executar
 - **Sentence Transformers** – embeddings locais multilíngues de 384 dimensões
-- **Streamlit** – interface web
+- **Streamlit + Cytoscape.js** – interface e exploração interativa do subgrafo
 - **arXiv API + artigo SBC** – corpus versionado com 26 papers
 - **OpenAI SDK** – geração via Responses ou Chat Completions; aceita servidores locais compatíveis
 
@@ -59,14 +59,14 @@ Papers  →  1. Extração (NER/RE)  →  2. Grafo no Neo4j
 ## Estrutura do repositório
 
 ```
-├── data/          # Papers coletados (JSON, PDFs, abstracts)
+├── data/          # Corpus JSON, títulos/abstracts e aliases
 ├── schema/        # Script Cypher do grafo (constraints e índices)
 ├── extraction/    # Pipeline Text-to-Graph (NER/RE)
 ├── retrieval/     # Busca híbrida e geração de respostas
 ├── app.py         # Interface Streamlit integrada ao retrieval
 ├── app/           # Documentação da interface
 ├── tests/         # Testes unitários, da interface e de integração
-├── docs/          # Decisões do grupo, atas e artigo técnico
+├── docs/          # Decisões, atas e matriz de requisitos
 └── README.md
 ```
 
@@ -75,7 +75,7 @@ Papers  →  1. Extração (NER/RE)  →  2. Grafo no Neo4j
 ## Como instalar e rodar
 
 Execute os comandos a partir da raiz. Use Python 3.10+ (validação local e CI com
-3.13), Neo4j 5.23+ e um LLM disponível. A integração com o banco é testada no
+3.13), Neo4j 5.26+ e um LLM disponível. A integração com o banco é testada no
 Neo4j Community 5.26. O primeiro uso baixa o encoder público do Hugging Face.
 
 ```bash
@@ -85,13 +85,23 @@ python -m pip install -r requirements.txt
 ```
 
 Se ainda não tiver `.env`, copie `.env.example` e preencha `NEO4J_URI`,
-`NEO4J_USERNAME`, `NEO4J_PASSWORD`, `NEO4J_DATABASE`, `OPENAI_API_KEY` e
-`OPENAI_MODEL`. Para modelos locais, veja as variáveis `RETRIEVAL_LLM_*` na
+`NEO4J_USERNAME`, `NEO4J_PASSWORD`, `NEO4J_DATABASE` e `RETRIEVAL_LLM_*`. O
+exemplo usa endpoint OpenAI-compatible com modelo gratuito explícito. Veja a
 [documentação de retrieval](retrieval/README.md). Não versione credenciais.
 
 ```bash
-# Preparação completa; escreve apenas no Neo4j configurado.
-python run_pipeline.py --provider curated --import-neo4j --index-embeddings
+# Extração automática: envia títulos/abstracts ao provedor configurado.
+# Execute somente após autorizar esse envio e conferir o modelo gratuito.
+python run_pipeline.py --provider openai
+
+# Banco existente: confira a prévia de migração antes de aplicar.
+python -m src.migrate_entities
+
+# Fluxo completo autorizado: migra/importa e indexa o banco configurado.
+python run_pipeline.py --provider openai --import-neo4j --index-embeddings
+
+# Reprodução offline da curadoria, sem inferência de extração:
+# python run_pipeline.py --provider curated --import-neo4j --index-embeddings
 
 # Abrir a aplicação; as perguntas fazem somente leituras no Neo4j.
 python -m streamlit run app.py
@@ -100,20 +110,35 @@ python -m streamlit run app.py
 python -m retrieval "Quais trabalhos usam HotpotQA?"
 ```
 
-A interface chama `answer_question()` diretamente no processo Python. Mostra a
-resposta, citações `[S1]`, fontes com links e relevância RRF, avisos e o subgrafo
-recuperado. Também exibe consultas Cypher executadas, confiança heurística nas
-evidências e caminhos mínimos entre as primeiras seis fontes, até quatro saltos.
-A confiança não representa probabilidade de acerto. Não há
-servidor HTTP separado. Consultas sem evidência suficiente retornam abstenção;
-problemas de conexão, configuração ou geração são apresentados como erros.
+A interface chama `answer_question()` diretamente no processo Python. Mostra
+as afirmações com fontes `[S1]`, fatos/caminhos `[P1]`, pontuação RRF, confiança
+heurística, avisos e status do planejador. O grafo permite zoom, deslocamento,
+arraste, seleção de nós/arestas e destaque de caminhos sem nova inferência.
 
-O pipeline usa o corpus versionado e a curadoria existente. Sem `--import-neo4j`,
-executa apenas validação e extração offline. `--index-embeddings` requer importação.
-Falhas interrompem as etapas seguintes. A importação atualiza as relações de cada
-Paper em uma transação, preservando outros artigos, entidades compartilhadas e
-relações fora do modelo. Uma falha operacional pode deixar artigos anteriores já
-confirmados; corrija o problema e execute novamente. Não há limpeza global do banco.
+A extração automática é o padrão. Os modos `curated` e `heuristic` continuam
+explícitos para comparação/reprodução; seu resultado não é apresentado como
+extração por LLM. Relações automáticas precisam de evidência literal no texto.
+Autores e palavras-chave mantêm proveniência de metadados. A identidade de autores
+por nome é conservadora e não resolve homônimos sem fontes adicionais.
+
+A migração faz prévia e bloqueia conflitos; alterações só acontecem com `--apply`
+ou pelo pipeline explicitamente executado com `--import-neo4j`. Preserve um backup
+do banco antes de uma migração real. Não há limpeza global do grafo. A importação
+reconcilia cada Paper em uma transação, mantendo dados externos; falhas podem deixar
+papers anteriores confirmados, por isso a execução é retomável/idempotente.
+
+Extração, planejamento e resposta compartilham transporte com configuração por
+etapa. `EXTRACTION_LLM_*` e `CYPHER_LLM_*` sobrepõem `RETRIEVAL_LLM_*` explicitamente
+configurado. Outro endpoint exige sua própria chave. Não existe fallback para um
+modelo pago. O limite de geração inclui raciocínio quando o provedor assim o
+contabiliza. Truncamento, quota e falhas do planejador são diagnosticados; a
+recuperação fixa pode continuar em modo degradado claramente indicado.
+
+O cache em `output/llm_cache/` só reutiliza respostas aprovadas pelo validador da
+etapa. Modelo, endpoint, prompt, parâmetros e conteúdo integram sua identidade.
+O ledger conta tentativas malsucedidas: padrão de 40 chamadas/dia UTC e 10/minuto,
+configurável no `.env`. São limites locais, não a quota oficial. O padrão é zero
+retries automáticos; não são feitas chamadas de reparo ilimitadas.
 
 Se o banco já estiver preparado, inicie apenas a interface. Quando título,
 abstract ou conceitos mudarem, execute novamente o pipeline completo ou o
@@ -154,13 +179,34 @@ essa etapa mesmo quando os testes automatizados passam.
 
 | Semana | Foco | Entregável |
 |---|---|---|
-| 1 | Proposta + schema do grafo + coleta inicial | Schema documentado + ~30 papers |
+| 1 | Proposta + schema do grafo + coleta inicial | Schema documentado + 26 papers |
 | 2 | Extração de entidades/relações + ingestão no Neo4j | Grafo populado com dados reais |
 | 3 | Busca híbrida + multi-hop + geração de respostas | Sistema respondendo com provenance |
 | 4 | Interface final + artigo + apresentação | Código + artigo + demo pronta |
 
 ---
 
+## Avaliação e entrega
+
+Veja [evaluation/README.md](evaluation/README.md) para preparar anotações dos 26
+abstracts, revisar seis perguntas de desenvolvimento e dezesseis de avaliação,
+comparar baseline vetorial e híbrido, retomar execuções e gerar o relatório.
+Preparar/conferir/relatar é offline. Executar inferência é uma etapa explícita.
+A referência e as afirmações precisam da revisão de dois integrantes; dados
+preliminares e resultados incompletos são identificados como inconclusivos.
+
+A [matriz de conformidade](docs/ADEQUACAO_REQUISITOS.md) liga cada requisito às
+funcionalidades e aos testes. Artigo SBC/IEEE e defesa ficam com a equipe. O
+repositório pode permanecer privado, desde que o docente tenha acesso; isso deve
+ser conferido pela equipe antes da entrega.
+
 ## Créditos
 
-As bibliotecas de código aberto utilizadas serão listadas aqui, com os devidos créditos, conforme exigido pelas regras do projeto.
+- [Neo4j](https://neo4j.com/) e [driver Python](https://github.com/neo4j/neo4j-python-driver): LPG, Cypher e acesso ao banco.
+- [Sentence Transformers](https://www.sbert.net/) e [paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2): embeddings locais.
+- [Streamlit](https://streamlit.io/): interface e componentes.
+- [Cytoscape.js](https://js.cytoscape.org/): visualização interativa; distribuição local e licença MIT incluídas no componente.
+- [Lark](https://github.com/lark-parser/lark): gramática e análise do subconjunto de Cypher.
+- [OpenAI Python SDK](https://github.com/openai/openai-python): transporte para APIs compatíveis; o uso do SDK não implica uso de modelo OpenAI.
+- [python-dotenv](https://github.com/theskumar/python-dotenv), [arxiv.py](https://github.com/lukasschwab/arxiv.py) e [Graphviz Python](https://github.com/xflr6/graphviz): configuração, coleta e utilitário de visualização legado.
+- Corpus e fontes: [data/README.md](data/README.md). Não redistribuir textos integrais ou atribuir resultados ausentes nos abstracts.
