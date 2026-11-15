@@ -1,0 +1,926 @@
+{
+  "schema_version": "extraction-annotations-v1",
+  "source_hashes": {
+    "papers": "e325301065ae2dc6033740dcd45b2a0370c050878c773c3cfe54718bc6b4ff27",
+    "curated_entities": "089ab090afb797ebd809332889ef1a3a49fb21203d74003027c3325a1338ec0a",
+    "entity_registry": "628dadc96317244e847643be22d95e850419dadef2b5cf8f4d784f69cc10977d"
+  },
+  "review_policy": "Curated lists are annotation candidates, not gold. Review each relation and quote; two independent approvals are required.",
+  "papers": [
+    {
+      "paper_id": "2501.13958",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": []
+    },
+    {
+      "paper_id": "2408.08921",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": []
+    },
+    {
+      "paper_id": "2501.00309",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": []
+    },
+    {
+      "paper_id": "2404.16130",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "GraphRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "GraphRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Graph RAG",
+          "field": "title",
+          "quote": "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2410.05779",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "LightRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "LightRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "LightRAG",
+          "field": "title",
+          "quote": "LightRAG: Simple and Fast Retrieval-Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2405.14831",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "HippoRAG"
+        ],
+        "used_methods": [
+          "IRCoT"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "HippoRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "HippoRAG",
+          "field": "title",
+          "quote": "HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "IRCoT",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "IRCoT",
+          "field": "abstract",
+          "quote": "Single-step retrieval with HippoRAG achieves comparable or better performance than iterative retrieval like IRCoT while being 10-30 times cheaper and 6-13 times faster, and integrating HippoRAG into IRCoT brings further substantial gains.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2409.13731",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "KAG"
+        ],
+        "used_methods": [],
+        "datasets": [
+          "2WikiMultiHopQA",
+          "HotpotQA"
+        ]
+      },
+      "mentions": [
+        {
+          "candidate": "KAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "KAG",
+          "field": "title",
+          "quote": "KAG: Boosting LLMs in Professional Domains via Knowledge Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "2WikiMultiHopQA",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": null,
+          "field": null,
+          "quote": null,
+          "literal_match": false,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "HotpotQA",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "hotpotQA",
+          "field": "abstract",
+          "quote": "5% on hotpotQA in terms of F1 score.",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2502.14902",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "PathRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "PathRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "PathRAG",
+          "field": "title",
+          "quote": "PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2405.16506",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "GRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "GRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "GRAG",
+          "field": "title",
+          "quote": "GRAG: Graph Retrieval-Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2402.07630",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "G-Retriever"
+        ],
+        "used_methods": [],
+        "datasets": [
+          "GraphQA"
+        ]
+      },
+      "mentions": [
+        {
+          "candidate": "G-Retriever",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "G-Retriever",
+          "field": "title",
+          "quote": "G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "GraphQA",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "GraphQA",
+          "field": "abstract",
+          "quote": "Toward this goal, we first develop a Graph Question Answering (GraphQA) benchmark with data collected from different tasks.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2407.10805",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "Think-on-Graph 2.0"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "Think-on-Graph 2.0",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Think-on-Graph 2.0",
+          "field": "title",
+          "quote": "Think-on-Graph 2.0: Deep and Faithful Large Language Model Reasoning with Knowledge-guided Retrieval Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2412.18644",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "DynaGRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "DynaGRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "DynaGRAG",
+          "field": "title",
+          "quote": "DynaGRAG | Exploring the Topology of Information for Advancing Language Understanding and Generation in Graph Retrieval-Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2503.13804",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "GraphRAG-FI"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "GraphRAG-FI",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "GraphRAG-FI",
+          "field": "abstract",
+          "quote": "To address these issues, we propose GraphRAG-FI (Filtering and Integration), consisting of GraphRAG-Filtering and GraphRAG-Integration.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2506.19967",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "Inference-Scaled GraphRAG"
+        ],
+        "used_methods": [
+          "GraphRAG"
+        ],
+        "datasets": [
+          "GRBench"
+        ]
+      },
+      "mentions": [
+        {
+          "candidate": "Inference-Scaled GraphRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Inference Scaled GraphRAG",
+          "field": "title",
+          "quote": "Inference Scaled GraphRAG: Improving Multi Hop Question Answering on Knowledge Graphs",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "GraphRAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "GraphRAG",
+          "field": "title",
+          "quote": "Inference Scaled GraphRAG: Improving Multi Hop Question Answering on Knowledge Graphs",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "GRBench",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "GRBench",
+          "field": "abstract",
+          "quote": "Experiments on the GRBench benchmark demonstrate that our approach significantly improves multi-hop question answering performance, achieving substantial gains over both traditional GraphRAG and prior graph traversal baselines.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2508.19855",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "Youtu-GraphRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "Youtu-GraphRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Youtu-GraphRAG",
+          "field": "title",
+          "quote": "Youtu-GraphRAG: Vertically Unified Agents for Graph Retrieval-Augmented Complex Reasoning",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2509.22009",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "GraphSearch"
+        ],
+        "used_methods": [
+          "GraphRAG"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "GraphSearch",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "GraphSearch",
+          "field": "title",
+          "quote": "GraphSearch: An Agentic Deep Searching Workflow for Graph Retrieval-Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "GraphRAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "GraphRAG",
+          "field": "abstract",
+          "quote": "Graph Retrieval-Augmented Generation (GraphRAG) enhances factual reasoning in LLMs by structurally modeling knowledge through graph-based representations.",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2510.10114",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "LinearRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "LinearRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "LinearRAG",
+          "field": "title",
+          "quote": "LinearRAG: Linear Graph Retrieval Augmented Generation on Large-scale Corpora",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2501.15067",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "CG-RAG",
+          "LeSeGR"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "CG-RAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "CG-RAG",
+          "field": "title",
+          "quote": "CG-RAG: Research Question Answering by Citation Graph Retrieval-Augmented LLMs",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "LeSeGR",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "LeSeGR",
+          "field": "abstract",
+          "quote": "Next, we introduce Lexical-Semantic Graph Retrieval (LeSeGR), which seamlessly integrates sparse and dense retrieval signals with graph encoding.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2502.01113",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "GFM-RAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "GFM-RAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "GFM-RAG",
+          "field": "title",
+          "quote": "GFM-RAG: Graph Foundation Model for Retrieval Augmented Generation",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2502.04413",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "MedRAG"
+        ],
+        "used_methods": [],
+        "datasets": [
+          "DDXPlus",
+          "CPDD"
+        ]
+      },
+      "mentions": [
+        {
+          "candidate": "MedRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "MedRAG",
+          "field": "title",
+          "quote": "MedRAG: Enhancing Retrieval-augmented Generation with Knowledge Graph-Elicited Reasoning for Healthcare Copilot",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "DDXPlus",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "DDXPlus",
+          "field": "abstract",
+          "quote": "MedRAG is evaluated on both a public dataset DDXPlus and a private chronic pain diagnostic dataset (CPDD) collected from Tan Tock Seng Hospital, and its performance is compared against various existing RAG methods.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "CPDD",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "CPDD",
+          "field": "abstract",
+          "quote": "MedRAG is evaluated on both a public dataset DDXPlus and a private chronic pain diagnostic dataset (CPDD) collected from Tan Tock Seng Hospital, and its performance is compared against various existing RAG methods.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2502.06864",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "KG²RAG"
+        ],
+        "used_methods": [],
+        "datasets": [
+          "HotpotQA"
+        ]
+      },
+      "mentions": [
+        {
+          "candidate": "KG²RAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "KG$^2$RAG",
+          "field": "abstract",
+          "quote": "In this paper, we propose a novel Knowledge Graph-Guided Retrieval Augmented Generation (KG$^2$RAG) framework that utilizes knowledge graphs (KGs) to provide fact-level relationships between chunks, improving the diversity and coherence of the retrieved results.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "HotpotQA",
+          "relation": "EVALUATED_ON",
+          "label": "Dataset",
+          "surface_form": "HotpotQA",
+          "field": "abstract",
+          "quote": "Extensive experiments conducted on the HotpotQA dataset and its variants demonstrate the advantages of KG$^2$RAG compared to existing RAG-based approaches, in terms of both response quality and retrieval quality.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2502.09304",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "KET-RAG"
+        ],
+        "used_methods": [
+          "Microsoft GraphRAG"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "KET-RAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "KET-RAG",
+          "field": "title",
+          "quote": "KET-RAG: A Cost-Efficient Multi-Granular Indexing Framework for Graph-RAG",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Microsoft GraphRAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": null,
+          "field": null,
+          "quote": null,
+          "literal_match": false,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2505.24226",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "E²GraphRAG"
+        ],
+        "used_methods": [],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "E²GraphRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "E^2GraphRAG",
+          "field": "title",
+          "quote": "E^2GraphRAG: Streamlining Graph-based RAG for High Efficiency and Effectiveness",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2606.25656",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [],
+        "used_methods": [
+          "RAG",
+          "GraphRAG",
+          "Modular RAG",
+          "Agentic RAG"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "RAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "RAG",
+          "field": "title",
+          "quote": "Is GraphRAG Needed?",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "GraphRAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "GraphRAG",
+          "field": "title",
+          "quote": "Is GraphRAG Needed?",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Modular RAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "Modular RAG",
+          "field": "abstract",
+          "quote": "Here, we introduce a framework for different RAG scenarios evaluation and comparison on semi-structured knowledge bases, including regular RAG, GraphRAG, Modular RAG and Agentic RAG.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Agentic RAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "Agentic RAG",
+          "field": "abstract",
+          "quote": "As advanced RAG variants like GraphRAG and Agentic RAG emerge, one leading question is when and how to use them.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "2608.28766",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "Hybrid GraphRAG"
+        ],
+        "used_methods": [
+          "Classical RAG",
+          "Leiden community detection",
+          "Cross-encoder reranking"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "Hybrid GraphRAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Hybrid GraphRAG",
+          "field": "title",
+          "quote": "Beyond Vector Search: Comparing Classical RAG with Hybrid GraphRAG for Climate Science Q\\&A",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Classical RAG",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "Classical RAG",
+          "field": "title",
+          "quote": "Beyond Vector Search: Comparing Classical RAG with Hybrid GraphRAG for Climate Science Q\\&A",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Leiden community detection",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "Leiden community detection",
+          "field": "abstract",
+          "quote": "We propose a hybrid architecture that integrates vector search with GraphRAG, Leiden community detection, and cross-encoder re-ranking, achieving gains of 160\\% in contextual relevance and 177\\% in contextual recall compared to classical RAG.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Cross-encoder reranking",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "cross-encoder re-ranking",
+          "field": "abstract",
+          "quote": "We propose a hybrid architecture that integrates vector search with GraphRAG, Leiden community detection, and cross-encoder re-ranking, achieving gains of 160\\% in contextual relevance and 177\\% in contextual recall compared to classical RAG.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    },
+    {
+      "paper_id": "doi:10.5753/reic.2026.8503",
+      "status": "PENDING",
+      "reviewers": [],
+      "draft_from_curated_entities": {
+        "proposed_methods": [
+          "Multimodal RAG"
+        ],
+        "used_methods": [
+          "paraphrase-multilingual-MiniLM-L12-v2",
+          "text-embedding-3-small",
+          "Reciprocal Rank Fusion"
+        ],
+        "datasets": []
+      },
+      "mentions": [
+        {
+          "candidate": "Multimodal RAG",
+          "relation": "PROPOSES",
+          "label": "Method",
+          "surface_form": "Multimodal RAG",
+          "field": "title",
+          "quote": "Multimodal RAG with Knowledge Graphs for Portuguese Maintenance Manuals in the Context of Industry 4.",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "paraphrase-multilingual-MiniLM-L12-v2",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "paraphrase-multilingual-MiniLM-L12-v2",
+          "field": "abstract",
+          "quote": "We evaluate a local multilingual transformer (paraphrase-multilingual-MiniLM-L12-v2) and OpenAI’s text-embedding-3-small across 8 configurations (2 models × 4 retrieval modes) using a ground-truth set of 50 domain-specific queries.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "text-embedding-3-small",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "text-embedding-3-small",
+          "field": "abstract",
+          "quote": "We evaluate a local multilingual transformer (paraphrase-multilingual-MiniLM-L12-v2) and OpenAI’s text-embedding-3-small across 8 configurations (2 models × 4 retrieval modes) using a ground-truth set of 50 domain-specific queries.",
+          "literal_match": true,
+          "cue_match": true,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        },
+        {
+          "candidate": "Reciprocal Rank Fusion",
+          "relation": "USES_METHOD",
+          "label": "Method",
+          "surface_form": "Reciprocal Rank Fusion",
+          "field": "abstract",
+          "quote": "Analysis shows that while high-dimensional proprietary embeddings excel at capturing specialized technical jargon, standard Reciprocal Rank Fusion (RRF) introduces rank contamination when fusing sparse graph signals with dense text vectors.",
+          "literal_match": true,
+          "cue_match": false,
+          "review_status": "PENDING",
+          "review_note": "Candidate copied from curated_entities.json; verify identity and relation."
+        }
+      ]
+    }
+  ]
+}

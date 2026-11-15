@@ -32,6 +32,7 @@ jobs:
       TEST_NEO4J_USERNAME: neo4j
       TEST_NEO4J_PASSWORD: integration-test-password
       TEST_NEO4J_DATABASE: neo4j
+      LLM_CACHE_ENABLED: "0"
       TOKENIZERS_PARALLELISM: "false"
       STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
     steps:
@@ -46,15 +47,17 @@ jobs:
           python -m pip install -r requirements.txt coverage
       - name: Unit, UI and isolated database tests
         run: |
-          python -m coverage run --branch --source=src,retrieval,app_integration,run_pipeline -m unittest discover -s tests -v
+          python -m coverage run --branch --source=src,retrieval,graph_component,evaluation,app_integration,run_pipeline -m unittest discover -s tests -v
           python -m coverage report
       - name: Build complete corpus and validate embeddings
         run: python run_pipeline.py --provider curated --import-neo4j --index-embeddings
       - name: Verify retrieval with the real local encoder and database
         run: python tests/smoke_retrieval.py
+      - name: Verify generated Cypher and grounded answer without provider export
+        run: python tests/smoke_grounded_answer.py
       - name: Check syntax and whitespace
         run: |
-          python -m compileall -q src retrieval tests app.py app_integration.py run_pipeline.py extraction
+          python -m compileall -q src retrieval graph_component evaluation tests app.py app_integration.py run_pipeline.py extraction
           git diff --check
       - uses: actions/upload-artifact@v4
         if: always()

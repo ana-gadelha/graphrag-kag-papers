@@ -1,0 +1,750 @@
+{
+  "schema_version": "retrieval-question-bank-v1",
+  "source_hashes": {
+    "papers": "e325301065ae2dc6033740dcd45b2a0370c050878c773c3cfe54718bc6b4ff27",
+    "curated_entities": "089ab090afb797ebd809332889ef1a3a49fb21203d74003027c3325a1338ec0a",
+    "entity_registry": "628dadc96317244e847643be22d95e850419dadef2b5cf8f4d784f69cc10977d"
+  },
+  "review_policy": "Every reference is a draft until two independent human reviewers approve it.",
+  "questions": [
+    {
+      "id": "dev-direct-01",
+      "split": "dev",
+      "category": "direct",
+      "question": "No artigo 2405.14831, qual abordagem é introduzida e qual algoritmo de ranking ela integra?",
+      "reference_draft": {
+        "answer": "O artigo introduz HippoRAG e descreve que ele integra LLMs, grafos de conhecimento e Personalized PageRank.",
+        "required_papers": [
+          "2405.14831"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "In this work, we introduce HippoRAG"
+          },
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "the Personalized PageRank algorithm"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "dev-direct-02",
+      "split": "dev",
+      "category": "direct",
+      "question": "Quais benchmarks KAG nomeia ao relatar seus resultados de F1 em QA multihop?",
+      "reference_draft": {
+        "answer": "KAG relata melhorias relativas de F1 em 2wiki e hotpotQA.",
+        "required_papers": [
+          "2409.13731"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "19.6% on 2wiki and 33.5% on hotpotQA in terms of F1 score"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "dev-multihop-01",
+      "split": "dev",
+      "category": "multi_hop",
+      "question": "O paper GraphSearch compartilha quais coautores com Think-on-Graph 2.0, e que workflow ele propõe?",
+      "reference_draft": {
+        "answer": "Os dois registros compartilham Cehao Yang, Chengjin Xu, Xuhui Jiang e Jian Guo; o paper 2509.22009 propõe GraphSearch.",
+        "required_papers": [
+          "2407.10805",
+          "2509.22009"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Cehao Yang"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Chengjin Xu"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Xuhui Jiang"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Jian Guo"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "abstract",
+            "quote": "we propose \\textsc{GraphSearch}"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "dev-multihop-02",
+      "split": "dev",
+      "category": "multi_hop",
+      "question": "Qual coautor conecta o paper GFM-RAG ao paper Youtu-GraphRAG, e qual método o primeiro propõe?",
+      "reference_draft": {
+        "answer": "Linhao Luo aparece nos dois registros; 2502.01113 propõe GFM-RAG.",
+        "required_papers": [
+          "2502.01113",
+          "2508.19855"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2502.01113",
+            "field": "authors",
+            "quote": "Linhao Luo"
+          },
+          {
+            "paper_id": "2508.19855",
+            "field": "authors",
+            "quote": "Linhao Luo"
+          },
+          {
+            "paper_id": "2502.01113",
+            "field": "abstract",
+            "quote": "we introduce GFM-RAG"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "dev-unsupported-01",
+      "split": "dev",
+      "category": "unsupported",
+      "question": "Usando somente o abstract e metadados do paper LightRAG (2410.05779), quais GPU e quantidade de VRAM foram usadas nos experimentos?",
+      "reference_draft": {
+        "answer": "Abster-se: o corpus disponível não informa GPU nem VRAM para os experimentos de LightRAG.",
+        "required_papers": [],
+        "expected_abstention": true,
+        "evidence": [
+          {
+            "paper_id": "2410.05779",
+            "field": "abstract",
+            "quote": "Extensive experimental validation demonstrates considerable improvements"
+          }
+        ],
+        "review_note": "A ausência precisa ser confirmada por revisores no escopo completo do registro local."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "dev-trap-01",
+      "split": "dev",
+      "category": "interpretation_trap",
+      "question": "No paper HippoRAG, IRCoT é uma contribuição proposta pelo artigo ou um método existente com que ele compara/integrar?",
+      "reference_draft": {
+        "answer": "A evidência classifica IRCoT como método existente comparado/integrado, não como contribuição proposta por HippoRAG.",
+        "required_papers": [
+          "2405.14831"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "Single-step retrieval with HippoRAG achieves comparable or better performance than iterative retrieval like IRCoT"
+          },
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "integrating HippoRAG into IRCoT brings further substantial gains"
+          }
+        ],
+        "review_note": "Armadilha de relação: a menção explícita sustenta comparação/uso, não PROPOSES IRCoT."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-direct-01",
+      "split": "eval",
+      "category": "direct",
+      "question": "Segundo o paper 2404.16130, que abordagem ele propõe e em quais duas etapas constrói seu índice?",
+      "reference_draft": {
+        "answer": "Propõe GraphRAG; primeiro deriva um grafo de conhecimento de entidades e depois pré-computa resumos de comunidades.",
+        "required_papers": [
+          "2404.16130"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2404.16130",
+            "field": "abstract",
+            "quote": "we propose GraphRAG"
+          },
+          {
+            "paper_id": "2404.16130",
+            "field": "abstract",
+            "quote": "first, to derive an entity knowledge graph from the source documents, then to pregenerate community summaries"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-direct-02",
+      "split": "eval",
+      "category": "direct",
+      "question": "Que melhorias relativas de F1 KAG relata em 2wiki e hotpotQA?",
+      "reference_draft": {
+        "answer": "O abstract relata 19,6% em 2wiki e 33,5% em hotpotQA.",
+        "required_papers": [
+          "2409.13731"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "achieving a relative improvement of 19.6% on 2wiki and 33.5% on hotpotQA in terms of F1 score"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-intersection-01",
+      "split": "eval",
+      "category": "intersection",
+      "question": "Quais papers do corpus nomeiam HotpotQA nos resultados e qual abordagem cada um propõe?",
+      "reference_draft": {
+        "answer": "Os registros são 2409.13731, que introduz KAG, e 2502.06864, que propõe KG²RAG.",
+        "required_papers": [
+          "2409.13731",
+          "2502.06864"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "we introduce a professional domain knowledge service framework called Knowledge Augmented Generation (KAG)"
+          },
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "hotpotQA in terms of F1 score"
+          },
+          {
+            "paper_id": "2502.06864",
+            "field": "abstract",
+            "quote": "we propose a novel Knowledge Graph-Guided Retrieval Augmented Generation (KG$^2$RAG) framework"
+          },
+          {
+            "paper_id": "2502.06864",
+            "field": "abstract",
+            "quote": "Extensive experiments conducted on the HotpotQA dataset"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-intersection-02",
+      "split": "eval",
+      "category": "intersection",
+      "question": "PathRAG identifica redundância ou insuficiência como limitação central, e que mecanismos cita para tratá-la?",
+      "reference_draft": {
+        "answer": "O abstract aponta redundância na informação recuperada e descreve flow-based pruning junto com path-based prompting.",
+        "required_papers": [
+          "2502.14902"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2502.14902",
+            "field": "abstract",
+            "quote": "the redundancy of the retrieved information, rather than its insufficiency"
+          },
+          {
+            "paper_id": "2502.14902",
+            "field": "abstract",
+            "quote": "flow-based pruning"
+          },
+          {
+            "paper_id": "2502.14902",
+            "field": "abstract",
+            "quote": "path-based prompting"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-01",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Partindo do coautor Junnan Dong no registro 2501.13958, que método o outro paper do corpus propõe?",
+      "reference_draft": {
+        "answer": "O outro registro é 2508.19855 e propõe Youtu-GraphRAG.",
+        "required_papers": [
+          "2501.13958",
+          "2508.19855"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2501.13958",
+            "field": "authors",
+            "quote": "Junnan Dong"
+          },
+          {
+            "paper_id": "2508.19855",
+            "field": "authors",
+            "quote": "Junnan Dong"
+          },
+          {
+            "paper_id": "2508.19855",
+            "field": "abstract",
+            "quote": "we propose a vertically unified agentic paradigm, Youtu-GraphRAG"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-02",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Qual método é proposto pelo paper do corpus ligado por coautoria ao survey 2501.13958, e qual coautor em comum permite esse percurso?",
+      "reference_draft": {
+        "answer": "O paper 2510.10114 propõe LinearRAG; Qinggang Zhang é coautor nos dois registros.",
+        "required_papers": [
+          "2501.13958",
+          "2510.10114"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2501.13958",
+            "field": "authors",
+            "quote": "Qinggang Zhang"
+          },
+          {
+            "paper_id": "2510.10114",
+            "field": "authors",
+            "quote": "Qinggang Zhang"
+          },
+          {
+            "paper_id": "2510.10114",
+            "field": "abstract",
+            "quote": "we revisit the pipeline of existing GraphRAG systems and propose LinearRAG"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-03",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Qual workflow o paper ligado a Think-on-Graph 2.0 pela coautoria de Cehao Yang propõe, e qual outro autor em comum consta nos metadados?",
+      "reference_draft": {
+        "answer": "O paper 2509.22009 propõe GraphSearch; Chengjin Xu, Xuhui Jiang e Jian Guo também aparecem como coautores nos dois registros.",
+        "required_papers": [
+          "2407.10805",
+          "2509.22009"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Cehao Yang"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "authors",
+            "quote": "Cehao Yang"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Chengjin Xu"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "authors",
+            "quote": "Chengjin Xu"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Xuhui Jiang"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "authors",
+            "quote": "Xuhui Jiang"
+          },
+          {
+            "paper_id": "2407.10805",
+            "field": "authors",
+            "quote": "Jian Guo"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "authors",
+            "quote": "Jian Guo"
+          },
+          {
+            "paper_id": "2509.22009",
+            "field": "abstract",
+            "quote": "we propose \\textsc{GraphSearch}"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-04",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Que método o paper 2501.15067 propõe, e qual método é proposto pelo paper do corpus conectado a ele pelo coautor Yuntong Hu?",
+      "reference_draft": {
+        "answer": "O registro 2501.15067 propõe CG-RAG/LeSeGR; 2405.16506 compartilha Yuntong Hu e propõe GRAG.",
+        "required_papers": [
+          "2501.15067",
+          "2405.16506"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2501.15067",
+            "field": "authors",
+            "quote": "Yuntong Hu"
+          },
+          {
+            "paper_id": "2405.16506",
+            "field": "authors",
+            "quote": "Yuntong Hu"
+          },
+          {
+            "paper_id": "2501.15067",
+            "field": "abstract",
+            "quote": "we introduce Contextualized Graph Retrieval-Augmented Generation (CG-RAG)"
+          },
+          {
+            "paper_id": "2501.15067",
+            "field": "abstract",
+            "quote": "Next, we introduce Lexical-Semantic Graph Retrieval (LeSeGR)"
+          },
+          {
+            "paper_id": "2405.16506",
+            "field": "abstract",
+            "quote": "we introduce Graph Retrieval-Augmented Generation (GRAG)"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-05",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Quais métodos são propostos pelos dois papers ligados pela coautoria de Zirui Guo, e qual registro propõe cada método?",
+      "reference_draft": {
+        "answer": "Zirui Guo conecta 2410.05779, que propõe LightRAG, a 2502.14902, que propõe PathRAG.",
+        "required_papers": [
+          "2410.05779",
+          "2502.14902"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2410.05779",
+            "field": "authors",
+            "quote": "Zirui Guo"
+          },
+          {
+            "paper_id": "2502.14902",
+            "field": "authors",
+            "quote": "Zirui Guo"
+          },
+          {
+            "paper_id": "2410.05779",
+            "field": "abstract",
+            "quote": "we propose LightRAG"
+          },
+          {
+            "paper_id": "2502.14902",
+            "field": "abstract",
+            "quote": "we propose PathRAG"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-multihop-06",
+      "split": "eval",
+      "category": "multi_hop",
+      "question": "Que dois papers são conectados pelo benchmark HotpotQA, e que método cada paper apresenta?",
+      "reference_draft": {
+        "answer": "HotpotQA conecta 2409.13731 (KAG) a 2502.06864 (KG²RAG).",
+        "required_papers": [
+          "2409.13731",
+          "2502.06864"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "Knowledge Augmented Generation (KAG)"
+          },
+          {
+            "paper_id": "2409.13731",
+            "field": "abstract",
+            "quote": "hotpotQA"
+          },
+          {
+            "paper_id": "2502.06864",
+            "field": "abstract",
+            "quote": "Knowledge Graph-Guided Retrieval Augmented Generation (KG$^2$RAG)"
+          },
+          {
+            "paper_id": "2502.06864",
+            "field": "abstract",
+            "quote": "HotpotQA dataset"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-unsupported-01",
+      "split": "eval",
+      "category": "unsupported",
+      "question": "Usando somente o registro local de PathRAG (2502.14902), quais são os nomes exatos dos seis datasets citados?",
+      "reference_draft": {
+        "answer": "Abster-se: o abstract informa que os experimentos cobrem seis datasets, mas não os nomeia.",
+        "required_papers": [],
+        "expected_abstention": true,
+        "evidence": [
+          {
+            "paper_id": "2502.14902",
+            "field": "abstract",
+            "quote": "across six datasets and five evaluation dimensions"
+          }
+        ],
+        "review_note": "A não identificação dos seis nomes no abstract deve ser confirmada por revisores."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-unsupported-02",
+      "split": "eval",
+      "category": "unsupported",
+      "question": "Qual p-valor e intervalo de confiança MedRAG relata para a redução de erros diagnósticos?",
+      "reference_draft": {
+        "answer": "Abster-se: o registro local não fornece p-valor ou intervalo de confiança.",
+        "required_papers": [],
+        "expected_abstention": true,
+        "evidence": [
+          {
+            "paper_id": "2502.04413",
+            "field": "abstract",
+            "quote": "outperforms state-of-the-art models in reducing misdiagnosis rates"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-unsupported-03",
+      "split": "eval",
+      "category": "unsupported",
+      "question": "Qual é a VRAM da GPU usada nos experimentos de LinearRAG, segundo o abstract local?",
+      "reference_draft": {
+        "answer": "Abster-se: o abstract não identifica hardware ou VRAM.",
+        "required_papers": [],
+        "expected_abstention": true,
+        "evidence": [
+          {
+            "paper_id": "2510.10114",
+            "field": "abstract",
+            "quote": "Extensive experiments on four datasets"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-unsupported-04",
+      "split": "eval",
+      "category": "unsupported",
+      "question": "Qual linguagem de programação é usada na implementação de KET-RAG, segundo o registro local?",
+      "reference_draft": {
+        "answer": "Abster-se: o registro menciona resultados e comparação, mas não informa a linguagem da implementação.",
+        "required_papers": [],
+        "expected_abstention": true,
+        "evidence": [
+          {
+            "paper_id": "2502.09304",
+            "field": "abstract",
+            "quote": "We evaluate 13 solutions on three real-world datasets"
+          }
+        ],
+        "review_note": "Rascunho derivado do título, abstract e metadados; revisar semanticamente."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-trap-01",
+      "split": "eval",
+      "category": "interpretation_trap",
+      "question": "No paper HippoRAG, IRCoT deve ser anotado como PROPOSES ou como USES_METHOD? Qual trecho distingue a relação?",
+      "reference_draft": {
+        "answer": "IRCoT é USES_METHOD: HippoRAG é comparado com retrieval iterativo como IRCoT e também é integrado a IRCoT.",
+        "required_papers": [
+          "2405.14831"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "comparable or better performance than iterative retrieval like IRCoT"
+          },
+          {
+            "paper_id": "2405.14831",
+            "field": "abstract",
+            "quote": "integrating HippoRAG into IRCoT"
+          }
+        ],
+        "review_note": "Usar a taxonomia: comparação/integração sustenta USES_METHOD; não sustenta que HippoRAG propôs IRCoT."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    },
+    {
+      "id": "eval-trap-02",
+      "split": "eval",
+      "category": "interpretation_trap",
+      "question": "No paper KET-RAG (2502.09304), Graph-RAG da Microsoft é o método proposto pelo artigo ou um método existente usado como comparação?",
+      "reference_draft": {
+        "answer": "É um método existente usado como comparação; KET-RAG é o framework proposto.",
+        "required_papers": [
+          "2502.09304"
+        ],
+        "expected_abstention": false,
+        "evidence": [
+          {
+            "paper_id": "2502.09304",
+            "field": "abstract",
+            "quote": "we propose KET-RAG, a multi-granular indexing framework"
+          },
+          {
+            "paper_id": "2502.09304",
+            "field": "abstract",
+            "quote": "comparable or superior retrieval quality to Microsoft's Graph-RAG"
+          }
+        ],
+        "review_note": "Usar a taxonomia: KET-RAG é PROPOSES; Microsoft Graph-RAG é referência comparativa/USES_METHOD."
+      },
+      "human_review": {
+        "status": "PENDING",
+        "reviewers": []
+      }
+    }
+  ]
+}
