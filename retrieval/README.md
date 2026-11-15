@@ -1,425 +1,146 @@
-# Busca híbrida e respostas (GraphRAG)
+# Recuperação híbrida e respostas com evidências
 
-Esta etapa implementa busca vetorial, consultas Cypher, combinação
-dos resultados e envio do contexto para um LLM. A função `answer_question()`
-devolve resposta com citações, fontes e subgrafo para a interface Streamlit.
+## Configuração
 
-## Preparação
+Use Python 3.10+ (CI 3.13), Neo4j 5.26+ e as dependências da raiz. O `.env` é
+carregado sem substituir variáveis exportadas. Veja [`.env.example`](../.env.example).
 
-Use Neo4j 5.23 ou superior (incluindo Aura/Neo4j 2026). Execute a partir da raiz
-do repositório, com Python 3.10 ou superior:
+`RETRIEVAL_LLM_*` controla a resposta. `EXTRACTION_LLM_*` e `CYPHER_LLM_*` permitem
+sobrescrever modelo, endpoint, chave, protocolo, timeout, limite de saída e retries
+por etapa. Após editar o `.env` com a aplicação aberta, reinicie o processo
+Streamlit; variáveis já exportadas continuam tendo precedência.
+Extração/planejamento podem herdar o modelo de retrieval explicitamente
+configurado; não usam o modelo OpenAI implícito. Um novo endpoint não herda uma
+chave de outro. Endpoint alternativo sem chave recebe `local`, útil para servidores
+locais, mas insuficiente para OpenRouter/Groq ou outro serviço autenticado.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-```
+Protocolos aceitos: `chat_completions` e `responses`. Não há fallback automático
+entre provedores/modelos. A compatibilidade do SDK não garante disponibilidade,
+quota, suporte a parâmetros ou aderência do modelo ao contrato JSON.
 
-No PowerShell, ative o ambiente com `.\.venv\Scripts\Activate.ps1`.
-Copie `.env.example` para `.env` e preencha os valores locais:
+O limite `*_MAX_OUTPUT_TOKENS` deve acomodar JSON e raciocínio quando o provedor
+contabiliza ambos. Truncamento é erro, não resposta parcial aprovada. O padrão
+legado de resposta é 2000; o exemplo gratuito configura 8192 explicitamente.
 
-```dotenv
-NEO4J_URI=neo4j+s://SEU_ID.databases.neo4j.io
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=SUA_SENHA
-NEO4J_DATABASE=neo4j
-OPENAI_API_KEY=SUA_CHAVE_OPENAI
-OPENAI_MODEL=gpt-4.1-mini
-```
+## Uso
 
-Use o nome de usuário e de banco efetivamente fornecidos pela instância do
-grupo. O `.env` da raiz é carregado sem substituir variáveis já definidas no
-ambiente. Não versione credenciais.
-
-### 1. Importar o corpus e aplicar o schema
-
-Se o banco ainda não estiver preparado, execute o pipeline completo:
+Prepare o grafo conforme o README da raiz e execute:
 
 ```bash
-python run_pipeline.py --provider curated --import-neo4j --index-embeddings
+python -m retrieval "Quais trabalhos usam HotpotQA?"
+python -m retrieval "Quais trabalhos usam HotpotQA?" --mode vector --top-k 6
 ```
 
-Veja os detalhes em [extraction](../extraction/README.md) e
-[schema](../schema/README.md). A consulta não executa importação nem modifica o
-schema automaticamente. `python extraction/load_graph.py` é um atalho para esse
-mesmo fluxo completo com curadoria. Falhas interrompem as próximas etapas.
-
-### 2. Gerar os embeddings
-
-O pipeline completo já executa esta etapa. Para reindexar separadamente:
-
-```bash
-python -m retrieval.index_embeddings
-```
-
-O indexador lê título, abstract e nomes dos conceitos de cada `Paper` no Neo4j.
-Usa `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`, com 384
-dimensões e vetores normalizados, para permitir perguntas em português sobre
-abstracts em inglês. O mesmo modelo codifica documentos e perguntas.
-
-O primeiro uso baixa o modelo público do Hugging Face; os seguintes aproveitam
-o cache local. A geração de embeddings não usa a API OpenAI. O modelo usa uma
-janela limitada de tokens e pode truncar textos longos; o contexto de resposta
-continua incluindo os abstracts armazenados.
-
-O índice `paper_embedding` deve estar `ONLINE`, sobre `Paper.embedding`, com
-384 dimensões e similaridade `cosine`. O indexador verifica essas condições e
-informa ajustes necessários, sem apagar ou recriar o índice.
-
-Além de `embedding`, são gravados `embedding_model` e `embedding_hash` nos
-papers. Registros com o mesmo modelo, conteúdo e vetor válido são ignorados;
-novos registros e conteúdos alterados são recalculados. Para substituir
-explicitamente embeddings de outro modelo, mantendo a dimensão do índice:
-
-```bash
-python -m retrieval.index_embeddings --force
-```
-
-Execute novamente o indexador depois de alterar títulos, abstracts ou conceitos.
-A consulta rejeita embeddings ausentes, inválidos, incompatíveis ou
-desatualizados em qualquer paper do corpus, evitando misturar espaços vetoriais.
-
-### 3. Fazer uma pergunta
-
-```bash
-python -m retrieval "Quais artigos utilizam GraphRAG e quais datasets foram utilizados nesses trabalhos?"
-python -m retrieval "O que os papers dizem sobre KAG?" --top-k 4
-```
-
-A saída de sucesso é JSON em `stdout`; falhas são informadas em `stderr`, com
-código de saída 1. Para salvar a saída:
-
-```bash
-python -m retrieval "Quais artigos propõem métodos multi-hop?" > /tmp/resposta.json
-```
-
-## Usar um modelo local: LM Studio, Ollama ou llama.cpp
-
-O padrão continua sendo a OpenAI com a Responses API. Para usar outro servidor,
-configure apenas as variáveis `RETRIEVAL_LLM_*`. Elas são exclusivas da geração
-de respostas e não alteram a configuração de extração dos outros integrantes.
-A assinatura e o retorno de `answer_question()` continuam iguais, assim como
-a busca no Neo4j e os embeddings locais. Não é necessário reindexar os papers
-ao trocar apenas o modelo gerador.
-
-### Exemplo com LM Studio
-
-Carregue um modelo com suporte a chat no LM Studio e inicie seu servidor na
-seção **Developer**. Use o endereço e o identificador exibidos pelo servidor.
-O endereço habitual é `http://localhost:1234/v1`; os modelos disponíveis podem
-ser consultados com:
-
-```bash
-curl http://localhost:1234/v1/models
-```
-
-No `.env` da raiz:
-
-```dotenv
-RETRIEVAL_LLM_BASE_URL=http://localhost:1234/v1
-RETRIEVAL_LLM_MODEL=IDENTIFICADOR_EXATO_DO_MODELO
-RETRIEVAL_LLM_API=chat_completions
-RETRIEVAL_LLM_TIMEOUT=120
-```
-
-Se o servidor exigir autenticação, acrescente `RETRIEVAL_LLM_API_KEY` com a chave
-dele. Sem essa variável, um endereço próprio recebe a chave fictícia `local`,
-para atender ao SDK; ela não autentica servidores que exigem uma chave real.
-A chave configurada em `OPENAI_API_KEY` **não é enviada ao endereço alternativo**.
-
-Execute a consulta normalmente:
-
-```bash
-python -m retrieval "Quais artigos utilizam GraphRAG e quais datasets foram utilizados?"
-```
-
-### Outros servidores compatíveis
-
-| Servidor | Exemplo de `RETRIEVAL_LLM_BASE_URL` | `RETRIEVAL_LLM_MODEL` |
-|---|---|---|
-| LM Studio | `http://localhost:1234/v1` | Identificador do modelo carregado |
-| Ollama | `http://localhost:11434/v1` | Nome e tag exatos do modelo instalado |
-| `llama-server` do llama.cpp | `http://localhost:8080/v1` | Identificador/alias anunciado pelo servidor |
-
-As portas são exemplos e devem coincidir com as do seu servidor. Llama é uma
-família de modelos que pode ser servida por essas ferramentas. O programa não
-instala, inicia ou baixa automaticamente o modelo gerador.
-
-Se a aplicação Python rodar em outro computador ou contêiner, `localhost`
-representará esse ambiente; use o endereço pelo qual ele alcança o servidor.
-
-### Configuração e escolha do endpoint
-
-| Variável | Comportamento |
-|---|---|
-| `RETRIEVAL_LLM_BASE_URL` | URL HTTP(S) com o prefixo da API, normalmente `/v1`; sem ela, usa a OpenAI oficial |
-| `RETRIEVAL_LLM_MODEL` | Obrigatória quando há endereço próprio; sem ele, pode sobrescrever `OPENAI_MODEL` |
-| `RETRIEVAL_LLM_API` | `chat_completions` ou `responses`; padrão: chat com endereço próprio, Responses com OpenAI |
-| `RETRIEVAL_LLM_API_KEY` | Chave específica; sem ela, usa `local` com endereço próprio ou `OPENAI_API_KEY` no padrão OpenAI |
-| `RETRIEVAL_LLM_TIMEOUT` | Timeout positivo em segundos; padrão: 120 com endereço próprio e 30 com OpenAI |
-| `RETRIEVAL_LLM_MAX_OUTPUT_TOKENS` | Inteiro positivo; teto de geração, com padrão 2000 quando ausente ou vazio; os limites aceitos dependem do modelo/provedor |
-
-O timeout é aplicado pelo cliente HTTP às operações da requisição, incluindo
-esperar a resposta; o SDK também permite até duas tentativas adicionais em
-erros transitórios. Portanto, não representa um limite total de execução.
-
-`chat_completions` usa `/chat/completions`, mensagens `system`/`user` e
-`max_tokens` com o teto configurado. `responses` usa `/responses`, `instructions`,
-`max_output_tokens` com o mesmo teto e `store=False`. Para um servidor local que implemente
-Responses, altere explicitamente:
-
-```dotenv
-RETRIEVAL_LLM_API=responses
-```
-
-### Limite de geração e raciocínio
-
-Para ampliar o orçamento de geração, acrescente ao `.env`, por exemplo:
-
-```dotenv
-RETRIEVAL_LLM_MAX_OUTPUT_TOKENS=8192
-```
-
-O teto não é um tamanho obrigatório de resposta. Na OpenRouter, modelos com
-raciocínio podem consumir esse orçamento entre raciocínio interno e texto final;
-um limite baixo pode terminar com `finish_reason: length` antes de produzir o
-JSON da resposta. Aumentá-lo dá mais espaço, mas não garante conclusão nem muda
-o controle de raciocínio do modelo. A aplicação continua rejeitando gerações
-incompletas. Consulte a [documentação de raciocínio da OpenRouter](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
-
-Um teto maior permite mais processamento e pode aumentar a espera, o consumo de
-tokens e o custo nos modelos pagos. O modelo deve aceitar o teto solicitado e
-acomodar entrada e geração em sua janela de contexto. Modelos gratuitos mantêm
-suas quotas e restrições de capacidade; ampliar o teto não remove esses limites.
-O timeout é independente e pode precisar ser revisto para gerações mais longas.
-Esse parâmetro não altera `top_k`, os embeddings ou as consultas ao grafo.
-
-Reinicie o Streamlit após editar o `.env`. Variáveis já exportadas no ambiente
-têm precedência sobre o arquivo. A configuração do LLM só é validada ao gerar
-uma resposta: indexação e abstenção sem fontes continuam independentes dela.
-
-A compatibilidade é por endpoint e pelos parâmetros aceitos. Não há troca
-automática de protocolo ou retorno à nuvem em caso de falha. O cliente também
-fixa o endereço explicitamente: `OPENAI_BASE_URL` não controla mais retrieval;
-use `RETRIEVAL_LLM_BASE_URL` para isolar essa etapa da extração.
-
-Se a resposta for truncada, bloqueada, vazia, tiver JSON inválido ou citações inválidas, a
-função sinaliza erro. Para reduzir o contexto enviado a um modelo com janela
-menor, use, por exemplo, `--top-k 3`. Configure também uma janela adequada no
-servidor; a aplicação não altera essa configuração por conta própria.
-
-Para voltar à OpenAI, remova as variáveis `RETRIEVAL_LLM_*` e mantenha
-`OPENAI_MODEL` e `OPENAI_API_KEY`. O indexador e a abstenção sem evidências
-funcionam mesmo quando a configuração do modelo gerador está incompleta.
-
-Documentação dos servidores: [LM Studio](https://lmstudio.ai/docs/developer/openai-compat),
-[Ollama](https://docs.ollama.com/api/openai-compatibility) e
-[llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md).
-
-## Como funciona
-
-1. **Busca vetorial:** codifica a pergunta localmente e consulta os oito papers
-   mais próximos no índice do Neo4j.
-2. **Busca no grafo:** identifica nomes de autores, conceitos, métodos e datasets
-   mencionados na pergunta, independentemente dos resultados vetoriais. Tolera
-   diferenças de caixa e acentuação, além de aliases mínimos de GraphRAG/KAG;
-   não interpreta filtros ou consultas em linguagem natural arbitrária.
-3. **Expansão:** percorre até dois saltos, `Paper → entidade ← Paper`, também
-   respeitando a direção inversa das relações com autores. Busca até cinco
-   vizinhos por paper inicial e limita o ranking do grafo a vinte papers.
-   Usa `AUTHORED`, `HAS_CONCEPT`, `PROPOSES`, `USES_METHOD` e `EVALUATED_ON`.
-4. **Combinação:** aplica Reciprocal Rank Fusion, somando `1 / (60 + posição)`
-   em cada canal. Na seleção final, prioriza papers ligados a mais entidades
-   explicitamente citadas na pergunta; entre papers com a mesma quantidade de
-   correspondências diretas, ordena por RRF e desempata pelo ID. Isso evita que
-   vizinhos encontrados nos dois canais excluam os artigos de um autor citado.
-   Remove duplicatas pelo ID. O campo `score` continua sendo a pontuação RRF,
-   representa relevância relativa e pode não ser decrescente na ordem final.
-5. **Evidências:** seleciona seis papers por padrão e recupera seus metadados,
-   abstracts e relações. Esses mesmos dados formam o contexto e o subgrafo.
-   Depois, calcula caminhos mínimos entre pares das primeiras seis fontes (até
-   quinze pares), sem alterar a seleção nem a ordem dos resultados. Percorre
-   nos dois sentidos as cinco relações do modelo, até quatro saltos. Um caminho
-   pode incluir artigos intermediários, marcados como `connector: true`, que não
-   recebem uma citação nem se tornam fontes adicionais. Empates podem retornar
-   qualquer caminho mínimo. Não encontrar caminho significa ausência de conexão
-   nesse limite, não necessariamente desconexão no grafo inteiro.
-6. **Resposta:** envia pergunta e evidências ao LLM configurado, pedindo
-   resposta em português com referências `[S1]`, `[S2]`, etc. Abstracts e pergunta
-   são tratados como dados, sem autorização para executar suas instruções.
-   O provedor devolve internamente JSON com `answer` textual e `abstained`
-   booleano, sem depender de recursos de schema exclusivos da OpenAI. Esse
-   envelope não altera o contrato público de `answer_question()`.
-   Respostas factuais precisam citar fontes recuperadas. Na abstenção total,
-   mesmo com fontes recuperadas, a função publica uma mensagem determinística
-   de evidência insuficiente e acrescenta um aviso; preserva fontes e subgrafo
-   para inspeção. Respostas parciais continuam exigindo citações e indicando
-   lacunas. Citações desconhecidas ou malformadas são rejeitadas também quando
-   o modelo sinaliza abstenção.
-
-Os dois protocolos exigem conclusão normal do provedor. Erros de autenticação,
-rede, timeout, permissões e quota têm mensagens específicas sem incluir corpos
-de erro ou credenciais. Ver [erros da API OpenAI](https://developers.openai.com/api/docs/guides/error-codes).
-
-As consultas Cypher são fixas e parametrizadas. O LLM não gera Cypher nem recebe
-credenciais do Neo4j. `answer_question()` realiza apenas leituras no banco;
-somente o comando de indexação escreve os embeddings.
-
-## Integração com a interface
+Uma pergunta real envia contexto ao provedor configurado. Os testes usam transporte
+em memória e banco isolado; não fazem inferência. Sucesso do CLI produz JSON em
+stdout; falha produz mensagem sanitizada em stderr e código de saída 1.
 
 ```python
 from retrieval import answer_question
-
-result = answer_question(
-    "Quais artigos utilizam GraphRAG e quais datasets foram utilizados?",
-    top_k=6,
-)
-
-print(result["answer"])
-for source in result["sources"]:
-    print(source["citation_id"], source["title"], source["url"])
-
-nodes = result["subgraph"]["nodes"]
-edges = result["subgraph"]["edges"]
+result = answer_question("Quais trabalhos usam HotpotQA?", top_k=6, mode="hybrid")
 ```
 
-Assinatura pública:
+Perguntas: texto não vazio até 4000 caracteres. `top_k`: inteiro de 1 a 20.
+`mode`: `hybrid` (padrão) ou `vector` (baseline de título/abstract).
 
-```python
-answer_question(question: str, *, top_k: int = 6) -> dict
-```
+## Recuperação e Cypher gerado
 
-A pergunta deve ser um texto não vazio de até 4.000 caracteres. `top_k` deve ser
-um inteiro de 1 a 20. O retorno contém apenas valores serializáveis em JSON:
+1. Confere índice e embeddings; codifica a pergunta localmente com
+   `paraphrase-multilingual-MiniLM-L12-v2`, 384 dimensões/cosseno.
+2. Recupera oito candidatos vetoriais; no híbrido também encontra entidades por
+   nome/alias e expande Paper–entidade–Paper.
+3. O planejador recebe pergunta, schema, vocabulário e IDs. Gera Cypher real e
+   parâmetros JSON; não recebe credenciais do Neo4j.
+4. Lark analisa uma gramática fechada. O validador confere tipos, direções,
+   propriedades, parâmetros e corpus. Escrita, procedimentos, comentários,
+   consultas múltiplas, expressões e padrões fora do subconjunto são rejeitados.
+5. O AST é compilado para Cypher com limites antes das expansões: oito raízes,
+   vinte vizinhos por etapa, quarenta candidatos e timeout transacional de cinco
+   segundos. Mantém filtros e unicidade de relações do MATCH original. Resultados
+   podem ser parciais; limites são avisados.
+6. Os IDs válidos são incorporados ao ranking do grafo, combinado ao vetor por
+   RRF. `graph_origins` distingue `fixed_graph` e `llm_cypher` sem tratá-los como
+   evidências independentes. Candidatos do Cypher validado têm prioridade de
+   seleção; em seguida vêm correspondências diretas e o desempate pelo RRF,
+   evitando que vizinhos genéricos eliminem os artigos filtrados pela pergunta.
+7. Materializa fatos e caminhos mínimos até quatro saltos entre as primeiras
+   seis fontes. Artigos intermediários recebem `connector`, sem virar fontes.
+
+O subconjunto aceita até três padrões conectados, filtros de ID/ano e entidades,
+interseções e caminhos explícitos de até quatro saltos. Não é um console Cypher
+geral. O modo de leitura do driver é roteamento; a proteção obrigatória está no
+validador e nos limites. Use credenciais de leitura quando disponíveis.
+
+`retrieval.hybrid.retrieve(..., use_planner=False)` permanece uma operação sem LLM
+por padrão, apropriada ao smoke. `answer_question` ativa o planejador no híbrido.
+
+Falhas do planejador preservam status (`invalid`, `quota`, `timeout`, erro de
+configuração etc.) e modo degradado com recuperação fixa. `empty` significa
+consulta válida sem candidatos, não prova de ausência no corpus.
+
+## Contrato de resposta
+
+Os campos anteriores são preservados, com extensões:
 
 | Campo | Conteúdo |
 |---|---|
-| `question` | Pergunta recebida, sem espaços nas extremidades |
-| `answer` | Texto em português com citações locais à resposta |
-| `sources` | Evidências enviadas ao LLM, inclusive aquelas que ele não citou |
-| `subgraph.nodes` | Nós com `id`, `label` e `properties` |
-| `subgraph.edges` | Arestas com `source`, `target` e `type` |
-| `warnings` | Limitações do material recuperado |
-| `queries` | Consultas executadas, em ordem, com `stage`, `cypher` e `parameters` |
-| `paths` | Caminhos mínimos com `source`, `target`, `length`, `nodes` e `edges` |
-| `confidence` | Heurística com `level`, `method` e `reason` |
+| `question`, `mode` | Entrada normalizada e modo usado |
+| `answer`, `abstained` | Texto renderizado e abstenção explícita |
+| `claims` | Afirmações aprovadas, fontes, caminhos, trechos e offsets |
+| `sources` | IDs `[Sx]`, títulos, abstracts, metadados e ranking |
+| `subgraph` | Nós por ID canônico, arestas dirigidas com ID e proveniência |
+| `paths` | `path_id` `[Px]`, tipo `shortest` ou `fact`, extremos, nós e arestas |
+| `planner` | Status, candidatos, diagnóstico e recibo da geração de Cypher |
+| `queries` | Consultas fixas e diagnósticos do Cypher original/canônico/executado |
+| `confidence` | Heurística de convergência dos canais nas fontes citadas |
+| `generation` | Recibo: modelo, cache, uso de tokens quando fornecido e duração |
+| `warnings` | Limitações do corpus e da operação |
 
-Os extremos `source` e `target` de cada caminho são IDs de citação, como `S1`
-e `S2`. Os nós estão na ordem do percurso e seguem o formato do subgrafo;
-as arestas mantêm a direção original das relações. Nós e arestas intermediários
-são incorporados ao subgrafo com deduplicação. Artigos intermediários que não
-estão nas fontes recebem `connector: true` e apenas metadados de identificação.
-Compartilhar uma entidade indica uma conexão estrutural, não equivalência entre
-resultados científicos. O gerador recebe os caminhos com `node_ids` ordenados,
-resolvidos pelos nós do subgrafo, para evitar repetir abstracts em cada par.
-Não recebe o diagnóstico das consultas nem a confiança calculada posteriormente.
+O modelo deve devolver `abstained` e `claims`. Cada claim contém `kind`, `text`,
+`source_ids`, `path_ids` e `quotes`. Afirmações científicas (`document`) exigem
+um trecho literal de título/abstract para cada fonte citada. Conexões (`graph`)
+exigem caminhos válidos; seu texto é renderizado diretamente das arestas, sem
+publicar conclusões livres do modelo sobre equivalência de resultados.
 
-`queries` inclui a verificação do índice e somente as consultas efetivamente
-executadas. A consulta de caminhos é dispensada com menos de duas fontes.
-O parâmetro `embedding` é resumido como
-`{"dimensions": 384, "values_omitted": true}`; para reproduzir a busca é necessário
-gerar o vetor da pergunta com o mesmo encoder. Os demais parâmetros de consulta
-são preservados; credenciais e dados da conexão não fazem parte do registro.
-Respostas de abstenção preservam consultas, fontes e caminhos disponíveis.
-Erros operacionais continuam sendo sinalizados por `RetrievalError`.
+Caminhos `fact` representam relações de um salto e podem ter a mesma fonte nos
+extremos. `shortest` conecta fontes distintas. Nós e arestas mantêm a direção
+original, inclusive Author → Paper. IDs de entidade usam `entity_id`; leituras
+legadas usam nome como fallback até a migração. IDs `[Sx]` e `[Px]` pertencem a
+uma resposta específica. IDs internos do banco não são expostos.
 
-### Confiança heurística nas evidências
+O validador rejeita IDs ausentes, trechos inventados e caminhos descontínuos. Um
+texto que cita um trecho real ainda pode interpretá-lo incorretamente; a revisão
+humana no [benchmark](../evaluation/README.md) mede essa dimensão. Sem evidência,
+a abstenção não exige LLM. A confiança não é probabilidade de acerto: continua
+considerando apenas fontes citadas e convergência vetor/grafo, com canais que
+compartilham sementes. RRF é relevância por fonte, não confiança factual.
 
-O método `cited-channel-agreement-v1` considera apenas fontes distintas citadas
-na resposta. `level` usa os valores `low`, `medium` e `high`:
+## Cache, orçamento e reprodução
 
-| Nível | Regra |
-|---|---|
-| Alta (`high`) | Pelo menos duas fontes citadas, todas recuperadas pelos canais vetorial e grafo |
-| Média (`medium`) | Não é alta, mas uma fonte citada veio dos dois canais ou há pelo menos duas fontes citadas |
-| Baixa (`low`) | Demais casos, incluindo abstenção e ausência de fontes |
+`retrieval.llm` compartilha transporte e tratamento de erros entre as etapas.
+Somente JSON semanticamente aprovado pela aplicação entra no cache reutilizável.
+Respostas inválidas ficam como diagnóstico. O hash considera modelo, endpoint,
+credencial hasheada, conteúdo, prompt, versão e parâmetros. As chaves nunca são
+persistidas em texto. Cache e ledger são privados/ignorados pelo Git.
 
-Essa classificação não é uma probabilidade calibrada de acerto nem verifica a
-veracidade ou o suporte de cada afirmação. Os canais compartilham informações:
-a expansão no grafo também pode partir de resultados vetoriais. A convergência
-é um indicador operacional, não evidência independente de correção. Citações
-repetidas contam uma vez; fontes não citadas e caminhos mínimos não elevam o
-nível. O LLM não escolhe a confiança. O RRF permanece uma pontuação de relevância
-relativa **por fonte**, separada dessa classificação.
+`LLM_DAILY_REQUEST_BUDGET` (40) e `LLM_REQUESTS_PER_MINUTE` (10) limitam tentativas
+locais, inclusive falhas. O dia segue UTC. Não representam quota oficial ou outras
+aplicações na conta. `*_MAX_RETRIES` vale zero por padrão e aceita até três retries
+explícitos; cada tentativa é contabilizada. Falhas de quota não são repetidas
+automaticamente. Ao atingir limite, retome mais tarde; resultados válidos em cache
+não gastam novas chamadas. `LLM_CACHE_ENABLED=0` desliga cache/ledger para testes.
 
-Cada fonte inclui `citation_id`, `paper_id`, `title`, `authors`, `year`, `url`,
-`abstract`, `relations`, `retrieved_by`, `ranks` e `score`. Cada relação tem
-`type`, `entity_label` e `entity_name`. Os IDs de citação são atribuídos depois
-da ordenação, começando por `S1`; devem ser associados à resposta correspondente.
+Trocar gerador não exige reindexar. Alterar título, abstract ou conceitos exige
+reindexação; o retrieval rejeita embeddings incompatíveis/desatualizados. O
+indexador reaproveita vetores válidos e usa `--force` para troca explícita de modelo.
 
-Os IDs do subgrafo usam o tipo e o identificador/nome com escape de URL, por
-exemplo `paper:2404.16130` e `method:GraphRAG`. Autores, conceitos, métodos e
-datasets com nomes iguais continuam sendo nós distintos por tipo. Arestas
-preservam a direção do banco, inclusive `Author → Paper`. Não são retornados
-embeddings, credenciais ou objetos do driver Neo4j.
-
-Para tratar erros na interface:
-
-```python
-from retrieval.config import RetrievalError
-
-try:
-    result = answer_question("Quais datasets aparecem nos trabalhos sobre GraphRAG?")
-except RetrievalError as exc:
-    print(str(exc))
-```
-
-Sem evidências, a função retorna uma abstenção com fontes e subgrafo vazios,
-sem chamar o LLM. Com evidências, a geração usa a configuração descrita acima;
-o padrão OpenAI exige uma chave de API. Falhas de
-conexão, indexação ou geração são sinalizadas como erro; não são transformadas
-em respostas científicas.
-
-## Validação e limites
+## Verificação
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-Os testes automatizados usam drivers e modelos simulados: cobrem validação de
-entrada, indexação incremental, configuração do índice, busca independente pelo
-grafo, expansão, fusão, fontes, subgrafo, citações e falhas dos serviços, sem
-precisar de credenciais ou chamadas de rede. Os testes dos dois protocolos
-também usam o SDK OpenAI real com transporte HTTP em memória: verificam endpoint,
-modelo, autenticação, timeout, payload e leitura da resposta. A execução real
-contra Neo4j e o servidor de geração deve ser conferida separadamente pelos
-comandos acima. Esta adição não foi executada contra um modelo carregado no
-LM Studio, Ollama ou llama.cpp.
-
-Na validação real do Aura, o banco inicialmente vazio foi reconstruído com
-302 nós e 335 relacionamentos. A comparação com os dados locais não encontrou
-nós ou relações ausentes, diferenças de propriedades ou relações duplicadas.
-As cinco constraints e os quatro índices explícitos foram conferidos, com
-todos os índices `ONLINE`.
-
-Foram gravados 26 embeddings MiniLM reais de 384 dimensões. A segunda execução
-reaproveitou todos os vetores, sem reprocessamento. As consultas de GraphRAG,
-HotpotQA e autor compartilhado passaram no banco real, incluindo conferência
-das fontes e da direção/completude das relações do subgrafo. Esse teste revelou
-e corrigiu a perda de artigos do autor citado durante a fusão dos rankings.
-O conjunto automatizado passou com 44 testes.
-
-A chave OpenAI autenticou e consultou o modelo, mas a tentativa de geração
-real retornou HTTP 429, código `credit_balance_exhausted`. Portanto, a geração
-completa de respostas por `answer_question()` e pelo CLI permanece pendente de
-saldo no provedor ou de um servidor local disponível. Os testes de citações e
-dos protocolos permanecem cobertos com transporte HTTP simulado.
-
-- O MVP usa metadados e abstracts, sem processar os PDFs completos. A curadoria
-  atual identifica datasets em apenas cinco dos 26 papers.
-- Ausência de `EVALUATED_ON` significa **dataset não identificado nas evidências**,
-  sem demonstrar que o trabalho não usou datasets.
-- `USES_METHOD` inclui uso, comparação ou baseline; não comprova que o paper
-  implementou o método. `PROPOSES` é uma relação distinta.
-- Os resultados dependem do corpus e do limite de recuperação. Respostas não
-  devem ser interpretadas como levantamento exaustivo de toda a literatura.
-- A validação exige ao menos uma citação e rejeita IDs não fornecidos ao LLM.
-  Isso confirma a referência ao contexto, mas não prova que cada afirmação seja
-  sustentada por ele. Revise as respostas usadas na apresentação.
-- O servidor configurado recebe a pergunta e as evidências selecionadas. No
-  padrão OpenAI pode haver custos de API. A Responses API usa `store=False`;
-  retenção e logs de servidores locais dependem da configuração deles.
-
-Referências de implementação: [modelo multilíngue](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2),
-[índices vetoriais do Neo4j](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/)
-e [geração de texto pela OpenAI](https://developers.openai.com/api/docs/guides/text).
+`TEST_NEO4J_*` habilita integração optativa em instância isolada. A suíte cobre o
+SDK real com HTTP em memória, geração simulada de Cypher executada no Neo4j,
+validação adversarial, citações, cache e retomada. Inferência e avaliação humana
+são verificações separadas; testes passando não demonstram redução de alucinações.

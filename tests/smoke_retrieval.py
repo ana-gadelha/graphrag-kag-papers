@@ -40,7 +40,10 @@ def main() -> None:
             "Quais trabalhos usam HotpotQA?",
             "Quais artigos têm Cehao Yang como autor?",
         ):
-            result = retrieve(driver, database, encoder, question, 6)
+            result = retrieve(driver, database, encoder, question, 6, use_planner=False)
+            assert result["planner"]["status"] == "disabled"
+            shortest = [p for p in result["paths"] if p.get("kind") == "shortest"]
+            assert shortest and all(p["length"] >= 2 for p in shortest), "No actual multi-hop shortest paths were materialized"
             sources = result["sources"]
             assert len(sources) == 6
             assert len({source["paper_id"] for source in sources}) == 6
@@ -79,7 +82,7 @@ def main() -> None:
                 )
             checks.append(
                 {"question": question, "sources": len(sources), "nodes": len(nodes),
-                 "paths": len(result["paths"]), "queries": len(result["queries"])}
+                 "paths": len(result["paths"]), "shortest_paths": len(shortest), "queries": len(result["queries"])}
             )
     print(
         json.dumps(

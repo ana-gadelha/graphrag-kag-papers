@@ -55,7 +55,7 @@ class HybridTests(unittest.TestCase):
         result = hybrid.assemble_evidence(hybrid.fuse_rankings(["a", "b"], []), papers, facts)
         self.assertEqual(len(result["subgraph"]["nodes"]), 5)
         self.assertEqual(result["subgraph"]["edges"][0],
-                         {"source": "author:Shared", "target": "paper:a", "type": "AUTHORED"})
+                         {"source": "author:Shared", "target": "paper:a", "type": "AUTHORED", "provenance": {}})
         self.assertEqual(result["sources"][0]["authors"], ["Shared"])
         self.assertEqual(result["sources"][1]["citation_id"], "S2")
         self.assertTrue(any("[S1] Dataset não identificado" in w for w in result["warnings"]))

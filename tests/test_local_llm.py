@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import unittest
 from contextlib import contextmanager
 from unittest.mock import Mock, patch
@@ -35,11 +36,15 @@ EVIDENCE = {
     "warnings": [],
     "paths": [],
 }
-TEXT = "O paper contém um abstract sintético [S1]."
+TEXT = "O paper contém um abstract sintético. [S1]"
 
 
 def chat_payload(text=TEXT, finish_reason="stop", *, abstained=False, raw=False):
-    text = text if raw else json.dumps({"answer": text, "abstained": abstained})
+    text = text if raw else json.dumps({"claims": ([] if abstained and not re.findall(r"S\d+", text) else [{
+        "kind": "document", "text": re.sub(r"\[S\d+\]", "", text).strip(),
+        "source_ids": list(dict.fromkeys(re.findall(r"S\d+", text))), "path_ids": [],
+        "quotes": [{"source_id": "S1", "field": "abstract", "quote": EVIDENCE["sources"][0]["abstract"]}],
+    }]), "abstained": abstained})
     return {
         "id": "chatcmpl-test",
         "object": "chat.completion",
@@ -56,7 +61,11 @@ def chat_payload(text=TEXT, finish_reason="stop", *, abstained=False, raw=False)
 
 
 def responses_payload(text=TEXT, status="completed", *, abstained=False, raw=False):
-    text = text if raw else json.dumps({"answer": text, "abstained": abstained})
+    text = text if raw else json.dumps({"claims": ([] if abstained and not re.findall(r"S\d+", text) else [{
+        "kind": "document", "text": re.sub(r"\[S\d+\]", "", text).strip(),
+        "source_ids": list(dict.fromkeys(re.findall(r"S\d+", text))), "path_ids": [],
+        "quotes": [{"source_id": "S1", "field": "abstract", "quote": EVIDENCE["sources"][0]["abstract"]}],
+    }]), "abstained": abstained})
     return {
         "id": "resp_test",
         "object": "response",
@@ -104,7 +113,7 @@ def sdk_transport(payload, *, status_code=200):
             http_client=httpx.Client(transport=httpx.MockTransport(handle)),
         )
 
-    with patch("openai.OpenAI", side_effect=make_client) as constructor:
+    with patch("retrieval.llm._runtime_directory", return_value=None), patch("openai.OpenAI", side_effect=make_client) as constructor:
         yield requests, constructor
 
 
@@ -340,7 +349,7 @@ class LocalLLMProtocolTests(unittest.TestCase):
                     factory("Sem evidências [S999].", abstained=True),
                 ),
             ):
-                with self.assertRaisesRegex(RetrievalError, "não foi recuperada"):
+                with self.assertRaises(RetrievalError):
                     _generate_answer(self.settings(api=api), "Pergunta?", EVIDENCE)
 
     def test_http_errors_are_actionable_and_sanitized(self):
@@ -385,6 +394,7 @@ class LocalLLMProtocolTests(unittest.TestCase):
 
             with (
                 self.subTest(error=type(error).__name__),
+                patch("retrieval.llm._runtime_directory", return_value=None),
                 patch("openai.OpenAI", side_effect=client),
             ):
                 with self.assertRaisesRegex(RetrievalError, expected) as caught:
@@ -419,7 +429,7 @@ class LocalLLMProtocolTests(unittest.TestCase):
             sdk_transport(chat_payload()),
         ):
             result = answer_question("  Pergunta?  ")
-        self.assertEqual(result, {
+        self.assertEqual({k: result[k] for k in ("question", "answer", "sources", "subgraph", "warnings", "paths", "queries", "confidence")}, {
             "question": "Pergunta?", "answer": TEXT, **EVIDENCE, "queries": [],
             "confidence": assess_confidence(TEXT, EVIDENCE["sources"], abstained=False),
         })

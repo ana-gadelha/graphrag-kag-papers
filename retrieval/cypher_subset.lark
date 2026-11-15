@@ -1,0 +1,23 @@
+// Deliberately closed: no generic Cypher expression, literal strings or comments.
+start: match_clause+ where_clause? return_clause limit_clause
+match_clause: "MATCH"i pattern ("," pattern)*
+pattern: node (relationship node)*
+node: "(" NAME label? properties? ")"
+label: ":" NAME
+properties: "{" property_pair ("," property_pair)* "}"
+property_pair: NAME ":" PARAM
+relationship: "-" "[:" NAME "]" "->" -> outgoing
+            | "<-" "[:" NAME "]" "-" -> incoming
+            | "-" "[:" NAME "]" "-" -> undirected
+where_clause: "WHERE"i predicate ("AND"i predicate)*
+predicate: property COMP PARAM
+property: NAME "." NAME
+return_clause: "RETURN"i distinct? property ("AS"i "paper_id"i)?
+distinct: "DISTINCT"i
+limit_clause: "LIMIT"i INT
+COMP: ">=" | "<=" | "=" | ">" | "<" | /IN/i
+PARAM: /\$[A-Za-z][A-Za-z0-9_]*/
+NAME: /[A-Za-z][A-Za-z0-9_]*/
+INT: /[0-9]+/
+%import common.WS
+%ignore WS

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import unittest
 from copy import deepcopy
 from contextlib import redirect_stderr, redirect_stdout
@@ -63,7 +64,11 @@ class FakeOpenAI:
             if raw
             else json.dumps(
                 {
-                    "answer": output_text,
+                    "claims": ([] if abstained and not re.findall(r"S\d+", output_text) else [{
+                        "kind": "document", "text": re.sub(r"\[S\d+\]", "", output_text).strip(),
+                        "source_ids": list(dict.fromkeys(re.findall(r"S\d+", output_text))), "path_ids": [],
+                        "quotes": [{"source_id": "S1", "field": "abstract", "quote": SOURCES[0]["abstract"]}],
+                    }]),
                     "abstained": abstained,
                 }
             )
@@ -84,6 +89,9 @@ class FakeOpenAI:
 
 class AnswerTests(unittest.TestCase):
     def setUp(self) -> None:
+        runtime_patch = patch("retrieval.llm._runtime_directory", return_value=None)
+        runtime_patch.start()
+        self.addCleanup(runtime_patch.stop)
         self.settings = Settings(
             uri="bolt://localhost:7687",
             username="neo4j",
@@ -157,10 +165,10 @@ class AnswerTests(unittest.TestCase):
         self.driver.close.assert_called_once_with()
         self.openai_client.assert_called_once_with(self.settings.generation)
         self.assertEqual(
-            result,
+            {k: result[k] for k in ("question", "answer", "sources", "subgraph", "warnings", "queries", "paths", "confidence")},
             {
                 "question": "O que foi avaliado?",
-                "answer": "O artigo avalia GraphRAG no HotpotQA [S1].",
+                "answer": "O artigo avalia GraphRAG no HotpotQA . [S1]",
                 "sources": SOURCES,
                 "subgraph": EVIDENCE["subgraph"],
                 "warnings": EVIDENCE["warnings"],
@@ -224,10 +232,10 @@ class AnswerTests(unittest.TestCase):
         result = answer_question("Pergunta?")
         context = json.loads(self.client.responses.create.call_args.kwargs["input"])
         self.assertEqual(context["paths"], [{
-            "source": "S1", "target": "S2", "length": 2,
-            "node_ids": [node["id"] for node in nodes], "edges": [],
+            "path_id": None, "kind": "shortest", "source": "S1", "target": "S2", "length": 2,
+            "node_ids": [node["id"] for node in nodes], "edge_ids": [],
         }])
-        self.assertEqual(context["subgraph"]["nodes"], nodes)
+        self.assertNotIn("abstract", context["subgraph"]["nodes"][0]["properties"])
         self.assertEqual(result["paths"], evidence["paths"])
         self.assertEqual(result["confidence"]["level"], "low")
         self.assertEqual(json.loads(json.dumps(result))["queries"], evidence["queries"])
@@ -326,11 +334,11 @@ class AnswerTests(unittest.TestCase):
                     answer_question("Pergunta?")
 
     def test_fenced_json_is_accepted(self) -> None:
-        self.openai_client.return_value = FakeOpenAI(
-            '```json\n{"answer":"Resposta [S1].","abstained":false}\n```',
-            raw=True,
-        )
-        self.assertEqual(answer_question("Pergunta?")["answer"], "Resposta [S1].")
+        valid = {"abstained": False, "claims": [{"kind": "document", "text": "Resposta.",
+            "source_ids": ["S1"], "path_ids": [], "quotes": [{"source_id": "S1",
+            "field": "abstract", "quote": SOURCES[0]["abstract"]}]}]}
+        self.openai_client.return_value = FakeOpenAI("```json\n" + json.dumps(valid) + "\n```", raw=True)
+        self.assertEqual(answer_question("Pergunta?")["answer"], "Resposta. [S1]")
 
     def test_neo4j_authentication_and_connectivity_errors_are_safe(self) -> None:
         from neo4j.exceptions import AuthError, ServiceUnavailable

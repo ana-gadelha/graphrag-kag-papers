@@ -19,10 +19,12 @@ def main(argv: list[str] | None = None) -> int:
         "--top-k", type=int, default=6,
         help="Quantidade máxima de artigos recuperados (1–20; padrão: 6)",
     )
+    parser.add_argument("--mode", choices=("hybrid", "vector"), default="hybrid",
+                        help="hybrid: grafo e Cypher LLM; vector: baseline textual vetorial")
     args = parser.parse_args(argv)
 
     try:
-        result = answer_question(args.question, top_k=args.top_k)
+        result = answer_question(args.question, top_k=args.top_k, mode=args.mode)
     except RetrievalError as exc:
         print(str(exc), file=sys.stderr)
         return 1
