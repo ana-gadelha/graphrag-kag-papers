@@ -51,6 +51,7 @@ class PipelineTests(unittest.TestCase):
         entities = extract_by_rules(SAMPLE)
         self.assertEqual(entities["proposed_methods"], ["GraphRAG"])
         self.assertEqual(entities["datasets"], ["HotpotQA"])
+        self.assertEqual(entities["used_methods"], [])
 
     def test_duplicate_ids_are_rejected(self) -> None:
         _, report = validate_and_normalize([SAMPLE, SAMPLE])

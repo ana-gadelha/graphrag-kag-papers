@@ -11,7 +11,7 @@ def run(*args: str) -> None:
 
 
 def run_pipeline(
-    provider: str = "curated",
+    provider: str = "auto",
     *,
     import_neo4j: bool = False,
     index_embeddings: bool = False,
@@ -22,6 +22,7 @@ def run_pipeline(
     run(python, "-m", "src.validate_data")
     run(python, "-m", "src.extract_entities", "--provider", provider)
     if import_neo4j:
+        run(python, "-m", "src.migrate_entities", "--apply")
         run(python, "-m", "src.import_graph")
         run(python, "-m", "src.validate_graph")
         if index_embeddings:
@@ -37,7 +38,9 @@ def run_pipeline(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Executa o pipeline Text-to-Graph.")
     parser.add_argument(
-        "--provider", choices=("curated", "heuristic", "openai"), default="curated"
+        "--provider",
+        choices=("auto", "curated", "heuristic", "openai"),
+        default="auto",
     )
     parser.add_argument("--import-neo4j", action="store_true")
     parser.add_argument("--index-embeddings", action="store_true")

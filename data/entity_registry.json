@@ -1,0 +1,2657 @@
+{
+  "version": 1,
+  "identity_policy": {
+    "Method": "Exact normalized aliases; unknown observed names get deterministic IDs. No fuzzy merges.",
+    "Dataset": "Exact normalized aliases; unknown observed names get deterministic IDs. No fuzzy merges.",
+    "Author": "Author IDs are name-only and normalized; homonyms with the same normalized name cannot be distinguished. Different names are not linked without authority data.",
+    "Concept": "Exact normalized keyword identity from paper metadata; no fuzzy merges."
+  },
+  "entities": [
+    {
+      "entity_id": "author:db816b5c8514882ef904c20f",
+      "label": "Author",
+      "canonical_name": "Abhinav Angirekula",
+      "aliases": [
+        "Abhinav Angirekula"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a674d0485f470aa923701b4e",
+      "label": "Author",
+      "canonical_name": "Alex Chao",
+      "aliases": [
+        "Alex Chao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:760a4473d1919a72ef1ac279",
+      "label": "Author",
+      "canonical_name": "Allen Zhang",
+      "aliases": [
+        "Allen Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:287b17de33cdecae2b859704",
+      "label": "Author",
+      "canonical_name": "Amin Javari",
+      "aliases": [
+        "Amin Javari"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:67274afcf3ef13aef98e6c67",
+      "label": "Author",
+      "canonical_name": "Apurva Mody",
+      "aliases": [
+        "Apurva Mody"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:1dec4fc9eb339d93b10949d7",
+      "label": "Author",
+      "canonical_name": "Bernal Jiménez Gutiérrez",
+      "aliases": [
+        "Bernal Jiménez Gutiérrez"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:57d1676255acebf9491b9b66",
+      "label": "Author",
+      "canonical_name": "Bo Long",
+      "aliases": [
+        "Bo Long"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7c4688306cfaba8f605ccf51",
+      "label": "Author",
+      "canonical_name": "Bo Pan",
+      "aliases": [
+        "Bo Pan"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:e460227475671ae499dfe806",
+      "label": "Author",
+      "canonical_name": "Boci Peng",
+      "aliases": [
+        "Boci Peng"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:c28c6056fcccaf4b9eb26879",
+      "label": "Author",
+      "canonical_name": "Boyu Chen",
+      "aliases": [
+        "Boyu Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:dd0d60a91d4a13bb528cd73f",
+      "label": "Author",
+      "canonical_name": "Bryan Hooi",
+      "aliases": [
+        "Bryan Hooi"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:2c03572927654ea6a57bf30d",
+      "label": "Author",
+      "canonical_name": "Cehao Yang",
+      "aliases": [
+        "Cehao Yang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:dd1d35ff44a9cbd32a0e55f1",
+      "label": "Author",
+      "canonical_name": "Chao Huang",
+      "aliases": [
+        "Chao Huang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6564ba353153f63401c7850b",
+      "label": "Author",
+      "canonical_name": "Chen Gong",
+      "aliases": [
+        "Chen Gong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:59e9016ede05fc1d32fa60f6",
+      "label": "Author",
+      "canonical_name": "Chen Ling",
+      "aliases": [
+        "Chen Ling"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d9624667b94fd684f9428617",
+      "label": "Author",
+      "canonical_name": "Cheng Yang",
+      "aliases": [
+        "Cheng Yang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:9358a4c70c819c5bbf98f415",
+      "label": "Author",
+      "canonical_name": "Chengjin Xu",
+      "aliases": [
+        "Chengjin Xu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:dd0ce160d7cbcb4168416d32",
+      "label": "Author",
+      "canonical_name": "Christian Freitas",
+      "aliases": [
+        "Christian Freitas"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:f090c4eaab97dcdc72383920",
+      "label": "Author",
+      "canonical_name": "Chuan Shi",
+      "aliases": [
+        "Chuan Shi"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:31406ab82aa331c9633d6cd6",
+      "label": "Author",
+      "canonical_name": "Chuang Zhou",
+      "aliases": [
+        "Chuang Zhou"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:b40ce7917c8c9a5662ffa6a1",
+      "label": "Author",
+      "canonical_name": "Chuntao Hong",
+      "aliases": [
+        "Chuntao Hong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:14f6267631729a9c0ddc77ee",
+      "label": "Author",
+      "canonical_name": "Chunyan Miao",
+      "aliases": [
+        "Chunyan Miao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:45ee3afc0f51f4252b3a9f36",
+      "label": "Author",
+      "canonical_name": "Daniel Naiff",
+      "aliases": [
+        "Daniel Naiff"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:18f4a4a1943405185fc124ce",
+      "label": "Author",
+      "canonical_name": "Darren Edge",
+      "aliases": [
+        "Darren Edge"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:42731d4cd6dc02516687a6c9",
+      "label": "Author",
+      "canonical_name": "Dasha Metropolitansky",
+      "aliases": [
+        "Dasha Metropolitansky"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6f99c509ef2d273622aca25d",
+      "label": "Author",
+      "canonical_name": "Di Yin",
+      "aliases": [
+        "Di Yin"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:bd66232a1f1427f859ffae6c",
+      "label": "Author",
+      "canonical_name": "Dinh Phung",
+      "aliases": [
+        "Dinh Phung"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:013a59325a118fad822e972d",
+      "label": "Author",
+      "canonical_name": "Disha Ahuja",
+      "aliases": [
+        "Disha Ahuja"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:c447383777a8c0166f7423aa",
+      "label": "Author",
+      "canonical_name": "Dongkuan Xu",
+      "aliases": [
+        "Dongkuan Xu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:e3494d3bb7369c1e1a9c6316",
+      "label": "Author",
+      "canonical_name": "Gholamreza Haffari",
+      "aliases": [
+        "Gholamreza Haffari"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6140702e00354c159c77dcb8",
+      "label": "Author",
+      "canonical_name": "Gustavo Pinto",
+      "aliases": [
+        "Gustavo Pinto"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:490c1e1045a27221f92e59e1",
+      "label": "Author",
+      "canonical_name": "Ha Trinh",
+      "aliases": [
+        "Ha Trinh"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:aa9dac9d8ce0f543b771820a",
+      "label": "Author",
+      "canonical_name": "Haizhou Shi",
+      "aliases": [
+        "Haizhou Shi"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:838b28ebb9f0c4ddfc368aef",
+      "label": "Author",
+      "canonical_name": "Hao Chen",
+      "aliases": [
+        "Hao Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:13f9dc08c2aadf7002b0f124",
+      "label": "Author",
+      "canonical_name": "Haoyu Han",
+      "aliases": [
+        "Haoyu Han"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:064715a924229727b2a8277e",
+      "label": "Author",
+      "canonical_name": "Harry Shomer",
+      "aliases": [
+        "Harry Shomer"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:05f3c5a26c2f5281b7a2c84d",
+      "label": "Author",
+      "canonical_name": "Huachi Zhou",
+      "aliases": [
+        "Huachi Zhou"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7498ce5ffe27184769304960",
+      "label": "Author",
+      "canonical_name": "Huaidong Xiong",
+      "aliases": [
+        "Huaidong Xiong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4122df0908319b52c1606e0e",
+      "label": "Author",
+      "canonical_name": "Huajun Chen",
+      "aliases": [
+        "Huajun Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:0865c5db55a8228fd3a85026",
+      "label": "Author",
+      "canonical_name": "Huaren Qu",
+      "aliases": [
+        "Huaren Qu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:c1b42a3673316bd60752f4a2",
+      "label": "Author",
+      "canonical_name": "Hui Xiong",
+      "aliases": [
+        "Hui Xiong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:38ecdc8de4c59be3fe8a49f3",
+      "label": "Author",
+      "canonical_name": "Jia Li",
+      "aliases": [
+        "Jia Li"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:497d1de307fb31443124bebf",
+      "label": "Author",
+      "canonical_name": "Jian Guo",
+      "aliases": [
+        "Jian Guo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:58d3de61ec3fee78080e8daa",
+      "label": "Author",
+      "canonical_name": "Jiapeng Zhu",
+      "aliases": [
+        "Jiapeng Zhu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:0f4cbc3da657103d26c1f2d2",
+      "label": "Author",
+      "canonical_name": "Jiaxin Mao",
+      "aliases": [
+        "Jiaxin Mao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:fb08384100ae0fd872e29863",
+      "label": "Author",
+      "canonical_name": "Jiayuan Ding",
+      "aliases": [
+        "Jiayuan Ding"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d03be2fe6e0a52dd6fbf2d91",
+      "label": "Author",
+      "canonical_name": "Jiliang Tang",
+      "aliases": [
+        "Jiliang Tang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:61cb4f43cfe322b558a39c75",
+      "label": "Author",
+      "canonical_name": "Jin Yang",
+      "aliases": [
+        "Jin Yang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4f8bc9cb0953cf3d8782a7e4",
+      "label": "Author",
+      "canonical_name": "Jonathan Larson",
+      "aliases": [
+        "Jonathan Larson"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d74ab6791de9e1c69a1892f7",
+      "label": "Author",
+      "canonical_name": "Joshua Bradley",
+      "aliases": [
+        "Joshua Bradley"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:73a3a46a79f42b83d0434a35",
+      "label": "Author",
+      "canonical_name": "Jun Xu",
+      "aliases": [
+        "Jun Xu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:10b16693a262e856c5c9047f",
+      "label": "Author",
+      "canonical_name": "Jun Zhou",
+      "aliases": [
+        "Jun Zhou"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a24e8e09c4a7d80349b2a137",
+      "label": "Author",
+      "canonical_name": "Junnan Dong",
+      "aliases": [
+        "Junnan Dong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a3f798add6f032d8f9f0fb29",
+      "label": "Author",
+      "canonical_name": "Junze Chen",
+      "aliases": [
+        "Junze Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:bcc0c0e4b980d1d56b268b05",
+      "label": "Author",
+      "canonical_name": "Kai Guo",
+      "aliases": [
+        "Kai Guo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:240e57199863ca77ecc65740",
+      "label": "Author",
+      "canonical_name": "Kangkang He",
+      "aliases": [
+        "Kangkang He"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8ad77285d3678c86c55a298c",
+      "label": "Author",
+      "canonical_name": "Karishma Thakrar",
+      "aliases": [
+        "Karishma Thakrar"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:f69219c992ba31a4d0c0b08c",
+      "label": "Author",
+      "canonical_name": "Lei Liang",
+      "aliases": [
+        "Lei Liang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d9156d42fd1fe3c1e7bba8cf",
+      "label": "Author",
+      "canonical_name": "Liang Zhao",
+      "aliases": [
+        "Liang Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:95f9b1d6896e106327aebd46",
+      "label": "Author",
+      "canonical_name": "Lianghao Xia",
+      "aliases": [
+        "Lianghao Xia"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8a8bfc2eed7f26a837128b33",
+      "label": "Author",
+      "canonical_name": "Lilian Berton",
+      "aliases": [
+        "Lilian Berton"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:b8fb5d3f600ea348d03fbdfe",
+      "label": "Author",
+      "canonical_name": "Lin Yuan",
+      "aliases": [
+        "Lin Yuan"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:88d76cd73f8bbf92b3568b0e",
+      "label": "Author",
+      "canonical_name": "Ling Zhong",
+      "aliases": [
+        "Ling Zhong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:399ee857aa5eb537b5309728",
+      "label": "Author",
+      "canonical_name": "Linhao Luo",
+      "aliases": [
+        "Linhao Luo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:12034fff1f1166369ac0aaf8",
+      "label": "Author",
+      "canonical_name": "Long Chen",
+      "aliases": [
+        "Long Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d06bb9496a47dccee84ea201",
+      "label": "Author",
+      "canonical_name": "Luyao Zhuang",
+      "aliases": [
+        "Luyao Zhuang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:25bf93b67242f6a2f5d14454",
+      "label": "Author",
+      "canonical_name": "Mahantesh Halappanavar",
+      "aliases": [
+        "Mahantesh Halappanavar"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:fc8588dce5f929d74410c5d5",
+      "label": "Author",
+      "canonical_name": "Mengshu Sun",
+      "aliases": [
+        "Mengshu Sun"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:27816f9313e58c20751a243d",
+      "label": "Author",
+      "canonical_name": "Michihiro Yasunaga",
+      "aliases": [
+        "Michihiro Yasunaga"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:32ed94468588986bbe7cd696",
+      "label": "Author",
+      "canonical_name": "Muzhi Li",
+      "aliases": [
+        "Muzhi Li"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:80d02c87ada6149f08b4f0f8",
+      "label": "Author",
+      "canonical_name": "Neil Shah",
+      "aliases": [
+        "Neil Shah"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:daeff40bdd978186a3b5343d",
+      "label": "Author",
+      "canonical_name": "Newman Cheng",
+      "aliases": [
+        "Newman Cheng"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:1aa815a9a036eb6f43b2448f",
+      "label": "Author",
+      "canonical_name": "Nitesh V. Chawla",
+      "aliases": [
+        "Nitesh V. Chawla"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:81efb81af4df1a618819d6f0",
+      "label": "Author",
+      "canonical_name": "Paul Liu",
+      "aliases": [
+        "Paul Liu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:5cfb1cfc99e174091de923fc",
+      "label": "Author",
+      "canonical_name": "Peilong Zhao",
+      "aliases": [
+        "Peilong Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:ebf1c3c5bc031d25155de12e",
+      "label": "Author",
+      "canonical_name": "Qi He",
+      "aliases": [
+        "Qi He"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4df42ff528a195fb36186078",
+      "label": "Author",
+      "canonical_name": "Qian-Wen Zhang",
+      "aliases": [
+        "Qian-Wen Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:042dcb8c8bb1d3899db5693b",
+      "label": "Author",
+      "canonical_name": "Qinggang Zhang",
+      "aliases": [
+        "Qinggang Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:58e393670ca9ef72801de66b",
+      "label": "Author",
+      "canonical_name": "Rahul Ghosh",
+      "aliases": [
+        "Rahul Ghosh"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:c1d58bf8fa222387613f054a",
+      "label": "Author",
+      "canonical_name": "Robert Osazuwa Ness",
+      "aliases": [
+        "Robert Osazuwa Ness"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d084f2d87783541df968f1c5",
+      "label": "Author",
+      "canonical_name": "Ronnie Alves",
+      "aliases": [
+        "Ronnie Alves"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:746951ad29aeedd911a35f91",
+      "label": "Author",
+      "canonical_name": "Ruoying He",
+      "aliases": [
+        "Ruoying He"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7256e95bff66a56917cf8c21",
+      "label": "Author",
+      "canonical_name": "Ryan A. Rossi",
+      "aliases": [
+        "Ryan A. Rossi"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:15877cfdc5fa1a545b00ef0a",
+      "label": "Author",
+      "canonical_name": "Ryan Razkenari",
+      "aliases": [
+        "Ryan Razkenari"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:716b3c4d81b9dd90d4cfb84f",
+      "label": "Author",
+      "canonical_name": "Seung-Hwan Lim",
+      "aliases": [
+        "Seung-Hwan Lim"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:969ff7da8f0b7aec4ba8485d",
+      "label": "Author",
+      "canonical_name": "Shengjie Ma",
+      "aliases": [
+        "Shengjie Ma"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:0ddff2f2bdf1c29982450a56",
+      "label": "Author",
+      "canonical_name": "Shenglai Zeng",
+      "aliases": [
+        "Shenglai Zeng"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:cfc67683687e5abf648563d2",
+      "label": "Author",
+      "canonical_name": "Shengyuan Chen",
+      "aliases": [
+        "Shengyuan Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:96d9fd269487c61cf22fac23",
+      "label": "Author",
+      "canonical_name": "Shiqi Zhang",
+      "aliases": [
+        "Shiqi Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6becf527af2edc7140f592b8",
+      "label": "Author",
+      "canonical_name": "Shirui Pan",
+      "aliases": [
+        "Shirui Pan"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7897a533955709289f8211d7",
+      "label": "Author",
+      "canonical_name": "Siliang Tang",
+      "aliases": [
+        "Siliang Tang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:66c321a52b4f2ec00a80a943",
+      "label": "Author",
+      "canonical_name": "Siyan Liu",
+      "aliases": [
+        "Siyan Liu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:45b0426ece42443396f8077c",
+      "label": "Author",
+      "canonical_name": "Siyu An",
+      "aliases": [
+        "Siyu An"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:bb2058fa321bd14590b9e479",
+      "label": "Author",
+      "canonical_name": "Steven Truitt",
+      "aliases": [
+        "Steven Truitt"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:62547d2c77adb6b6b4d51783",
+      "label": "Author",
+      "canonical_name": "Su-Yin Yang",
+      "aliases": [
+        "Su-Yin Yang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:303d91f0032646ec9674afb0",
+      "label": "Author",
+      "canonical_name": "Subhabrata Mukherjee",
+      "aliases": [
+        "Subhabrata Mukherjee"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:dc762ffc224e241f2581afc9",
+      "label": "Author",
+      "canonical_name": "Thomas Laurent",
+      "aliases": [
+        "Thomas Laurent"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:e5d826288e7fced3949102d2",
+      "label": "Author",
+      "canonical_name": "Tong Zhao",
+      "aliases": [
+        "Tong Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:39e71223cdcfb361d92a8f57",
+      "label": "Author",
+      "canonical_name": "Travis Thompson",
+      "aliases": [
+        "Travis Thompson"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7d9caaccf04464e431af0ca0",
+      "label": "Author",
+      "canonical_name": "Tu Ao",
+      "aliases": [
+        "Tu Ao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:f58df9cd74b5d82827dd47c2",
+      "label": "Author",
+      "canonical_name": "Venkatesh Pappakrishnan",
+      "aliases": [
+        "Venkatesh Pappakrishnan"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:955084d20bca133d8b031bfa",
+      "label": "Author",
+      "canonical_name": "Vidya Sagar Ravipati",
+      "aliases": [
+        "Vidya Sagar Ravipati"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:9ef449efe8999e745adb7688",
+      "label": "Author",
+      "canonical_name": "Wei Hu",
+      "aliases": [
+        "Wei Hu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4e8da9f079f7a7cded717e23",
+      "label": "Author",
+      "canonical_name": "Wen Zhang",
+      "aliases": [
+        "Wen Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:0bc2270fc35e5e27d8893cbb",
+      "label": "Author",
+      "canonical_name": "Wenguang Chen",
+      "aliases": [
+        "Wenguang Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:88c39c820b19577fb58373a0",
+      "label": "Author",
+      "canonical_name": "Xavier Bresson",
+      "aliases": [
+        "Xavier Bresson"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:f0458f1ac5ca8c5c191cf943",
+      "label": "Author",
+      "canonical_name": "Xianfeng Tang",
+      "aliases": [
+        "Xianfeng Tang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8b5d93023641fa93274f46f0",
+      "label": "Author",
+      "canonical_name": "Xiang Li",
+      "aliases": [
+        "Xiang Li"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:ef27975333d98d42508b2831",
+      "label": "Author",
+      "canonical_name": "Xiangrong Zhu",
+      "aliases": [
+        "Xiangrong Zhu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:878e85b0b58ccd7d3343e1f5",
+      "label": "Author",
+      "canonical_name": "Xiao Huang",
+      "aliases": [
+        "Xiao Huang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:ba92ef75c569c5253d65a77a",
+      "label": "Author",
+      "canonical_name": "Xiaohe Bo",
+      "aliases": [
+        "Xiaohe Bo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:12153ba143609a2be8bb9a03",
+      "label": "Author",
+      "canonical_name": "Xiaojun Wu",
+      "aliases": [
+        "Xiaojun Wu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:67a2fee1a8f2fe67fcbbf5f9",
+      "label": "Author",
+      "canonical_name": "Xiaokui Xiao",
+      "aliases": [
+        "Xiaokui Xiao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8b4cb5e25458fe4241448e2d",
+      "label": "Author",
+      "canonical_name": "Xiaoxin He",
+      "aliases": [
+        "Xiaoxin He"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:63d027a6dda8ad7e10f61361",
+      "label": "Author",
+      "canonical_name": "Xing Sun",
+      "aliases": [
+        "Xing Sun"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:1d72497a91361da4c4bfd587",
+      "label": "Author",
+      "canonical_name": "Xuejiao Zhao",
+      "aliases": [
+        "Xuejiao Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:5cadb2beb14bc539cab98ad0",
+      "label": "Author",
+      "canonical_name": "Xueyuan Lin",
+      "aliases": [
+        "Xueyuan Lin"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:401e7bead67c3dda03446081",
+      "label": "Author",
+      "canonical_name": "Xuhui Jiang",
+      "aliases": [
+        "Xuhui Jiang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:32956b53979718c3ed195b88",
+      "label": "Author",
+      "canonical_name": "Yaliang Li",
+      "aliases": [
+        "Yaliang Li"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a242ba0357c7111c9ff57c08",
+      "label": "Author",
+      "canonical_name": "Yan Zhang",
+      "aliases": [
+        "Yan Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d8cb9a220d7c6a6e823cad88",
+      "label": "Author",
+      "canonical_name": "Yanhua Yu",
+      "aliases": [
+        "Yanhua Yu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6baa09e7013722201af7703d",
+      "label": "Author",
+      "canonical_name": "Yann LeCun",
+      "aliases": [
+        "Yann LeCun"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:57f148bb37b7e3d203e776bd",
+      "label": "Author",
+      "canonical_name": "Ye Guo",
+      "aliases": [
+        "Ye Guo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4fd9d79d8508045806b8d991",
+      "label": "Author",
+      "canonical_name": "Yi Chang",
+      "aliases": [
+        "Yi Chang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a23d9c187eb08f10a4ddd9c8",
+      "label": "Author",
+      "canonical_name": "Yi Liu",
+      "aliases": [
+        "Yi Liu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:44912825056d2614c9bb18e2",
+      "label": "Author",
+      "canonical_name": "Yibo Zhao",
+      "aliases": [
+        "Yibo Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:d74e72acf7ff138613eda544",
+      "label": "Author",
+      "canonical_name": "Yifei Sun",
+      "aliases": [
+        "Yifei Sun"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:ed3dead6a50102d33b0105cd",
+      "label": "Author",
+      "canonical_name": "Yifei Yu",
+      "aliases": [
+        "Yifei Yu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:10df3943cd5d13ceb4f50899",
+      "label": "Author",
+      "canonical_name": "Yiheng Shu",
+      "aliases": [
+        "Yiheng Shu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:2199d5ec8485bef4ea9e0f0e",
+      "label": "Author",
+      "canonical_name": "Yijun Tian",
+      "aliases": [
+        "Yijun Tian"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:edaca46cf6c6eacfc6d98aad",
+      "label": "Author",
+      "canonical_name": "Yilin Xiao",
+      "aliases": [
+        "Yilin Xiao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:241034e6c7a38d03e8bd97f4",
+      "label": "Author",
+      "canonical_name": "Yinglong Xia",
+      "aliases": [
+        "Yinglong Xia"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:18ef1d535b9e80c3af687f2f",
+      "label": "Author",
+      "canonical_name": "Yiqian Huang",
+      "aliases": [
+        "Yiqian Huang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:9dee0b8548c6539d76a4d10a",
+      "label": "Author",
+      "canonical_name": "Yongchao Liu",
+      "aliases": [
+        "Yongchao Liu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8234621be96623ad90131b26",
+      "label": "Author",
+      "canonical_name": "Yongjia Lei",
+      "aliases": [
+        "Yongjia Lei"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8b9feb314a228118bb3341c5",
+      "label": "Author",
+      "canonical_name": "Yu Gu",
+      "aliases": [
+        "Yu Gu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:db41fb2675b7f0d383754388",
+      "label": "Author",
+      "canonical_name": "Yu Su",
+      "aliases": [
+        "Yu Su"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:f04fd5c3da929320d6d862e0",
+      "label": "Author",
+      "canonical_name": "Yu Wang",
+      "aliases": [
+        "Yu Wang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8c332785a4a2751e45f888c9",
+      "label": "Author",
+      "canonical_name": "Yuan Qu",
+      "aliases": [
+        "Yuan Qu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:a208dcbe381cf7b4593cd14c",
+      "label": "Author",
+      "canonical_name": "Yuan Tian",
+      "aliases": [
+        "Yuan Tian"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:85d7ddea39c6f89eb6e4c5ec",
+      "label": "Author",
+      "canonical_name": "Yuanchen Bei",
+      "aliases": [
+        "Yuanchen Bei"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:b5db4ba15f64c48f7f575e7b",
+      "label": "Author",
+      "canonical_name": "Yuanliang Sun",
+      "aliases": [
+        "Yuanliang Sun"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4a321d34dbef3d2914e55c26",
+      "label": "Author",
+      "canonical_name": "Yuexiang Xie",
+      "aliases": [
+        "Yuexiang Xie"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:3dc27bdbc0f92fcc817f17d3",
+      "label": "Author",
+      "canonical_name": "Yujing Zhang",
+      "aliases": [
+        "Yujing Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:9d396e4da4217978cb82dd89",
+      "label": "Author",
+      "canonical_name": "Yuluo Chen",
+      "aliases": [
+        "Yuluo Chen"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:5d545762e98c0c38e2b85cc1",
+      "label": "Author",
+      "canonical_name": "Yun Zhu",
+      "aliases": [
+        "Yun Zhu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:aba43e55d7c134a5067427f4",
+      "label": "Author",
+      "canonical_name": "Yunsheng Wu",
+      "aliases": [
+        "Yunsheng Wu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:09c531c59db04679e630e639",
+      "label": "Author",
+      "canonical_name": "Yuntong Hu",
+      "aliases": [
+        "Yuntong Hu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:afdc14398e2a53cc5fbb860a",
+      "label": "Author",
+      "canonical_name": "Yuxuan Zhou",
+      "aliases": [
+        "Yuxuan Zhou"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8b299254bb337d27d51b384f",
+      "label": "Author",
+      "canonical_name": "Zaoyang Wang",
+      "aliases": [
+        "Zaoyang Wang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:7e0d3e0c66e23b24a91c5e43",
+      "label": "Author",
+      "canonical_name": "Zheng Yuan",
+      "aliases": [
+        "Zheng Yuan"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:8072b9b648092469926a189d",
+      "label": "Author",
+      "canonical_name": "Zheng Zhang",
+      "aliases": [
+        "Zheng Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:798c3c1759414e4839619306",
+      "label": "Author",
+      "canonical_name": "Zhenghao Liu",
+      "aliases": [
+        "Zhenghao Liu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:21dfa533465e7e6ff4ba70f9",
+      "label": "Author",
+      "canonical_name": "Zhengke Gui",
+      "aliases": [
+        "Zhengke Gui"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:2013057090fac9cb20741084",
+      "label": "Author",
+      "canonical_name": "Zhigang Hua",
+      "aliases": [
+        "Zhigang Hua"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:e34fe753469ba79b9a64202e",
+      "label": "Author",
+      "canonical_name": "Zhihan Lei",
+      "aliases": [
+        "Zhihan Lei"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:0832432cedf0b5e55bfc358d",
+      "label": "Author",
+      "canonical_name": "Zhiqiang Zhang",
+      "aliases": [
+        "Zhiqiang Zhang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:18b288b473e32e09d1b4ba89",
+      "label": "Author",
+      "canonical_name": "Zhongjie Dai",
+      "aliases": [
+        "Zhongjie Dai"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:6d0667d591a94a51e20d6571",
+      "label": "Author",
+      "canonical_name": "Zhongpu Bo",
+      "aliases": [
+        "Zhongpu Bo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:2d8b90e1413f6a557a659970",
+      "label": "Author",
+      "canonical_name": "Zhongshu Zhu",
+      "aliases": [
+        "Zhongshu Zhu"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:43a75096d495fec8989f571f",
+      "label": "Author",
+      "canonical_name": "Zhouyu Jiang",
+      "aliases": [
+        "Zhouyu Jiang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:edb56cc1bc0426d34da42900",
+      "label": "Author",
+      "canonical_name": "Zicheng Zhao",
+      "aliases": [
+        "Zicheng Zhao"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:b9e9d997a4bc1182450f0028",
+      "label": "Author",
+      "canonical_name": "Zidan Yang",
+      "aliases": [
+        "Zidan Yang"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:605eb9d08a3667ec10942800",
+      "label": "Author",
+      "canonical_name": "Zijin Hong",
+      "aliases": [
+        "Zijin Hong"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "author:4c6b981a1d24ca5759a18f61",
+      "label": "Author",
+      "canonical_name": "Zirui Guo",
+      "aliases": [
+        "Zirui Guo"
+      ],
+      "identity_origin": "name_only_metadata"
+    },
+    {
+      "entity_id": "concept:c2e5f5f4784145d2a945a3d9",
+      "label": "Concept",
+      "canonical_name": "agentic retrieval",
+      "aliases": [
+        "agentic retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:3ebdf9780d3e6c7b14f76122",
+      "label": "Concept",
+      "canonical_name": "agentic search",
+      "aliases": [
+        "agentic search"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7a767bf0016f56ac9bbaac07",
+      "label": "Concept",
+      "canonical_name": "citation graph",
+      "aliases": [
+        "citation graph"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:e7f39df29b6ca17eeac44d8a",
+      "label": "Concept",
+      "canonical_name": "climate science",
+      "aliases": [
+        "climate science"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:95a27ca958d62043e25f8954",
+      "label": "Concept",
+      "canonical_name": "clinical reasoning",
+      "aliases": [
+        "clinical reasoning"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:bdb94916293bf3fec3e8f4f8",
+      "label": "Concept",
+      "canonical_name": "community detection",
+      "aliases": [
+        "community detection"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:388b47f35675a7746bb28c84",
+      "label": "Concept",
+      "canonical_name": "complex reasoning",
+      "aliases": [
+        "complex reasoning"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:c78026790d5a7a2887d6ef3d",
+      "label": "Concept",
+      "canonical_name": "context optimization",
+      "aliases": [
+        "context optimization"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:dd90e663b84a1a4a65851d11",
+      "label": "Concept",
+      "canonical_name": "DynaGRAG",
+      "aliases": [
+        "DynaGRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:cb33a84ab1aef7ef2e438a40",
+      "label": "Concept",
+      "canonical_name": "dynamic retrieval",
+      "aliases": [
+        "dynamic retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:2524b0802a565c2199f2aa88",
+      "label": "Concept",
+      "canonical_name": "E²GraphRAG",
+      "aliases": [
+        "E²GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:1fdb975d756ae736df6d22de",
+      "label": "Concept",
+      "canonical_name": "efficiency",
+      "aliases": [
+        "efficiency"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:49f6419d739110aa5a90c0ef",
+      "label": "Concept",
+      "canonical_name": "G-Retriever",
+      "aliases": [
+        "G-Retriever"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:cf66eb556837a154592fd181",
+      "label": "Concept",
+      "canonical_name": "GFM-RAG",
+      "aliases": [
+        "GFM-RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:e5843c51d664b5e0c852ab85",
+      "label": "Concept",
+      "canonical_name": "GRAG",
+      "aliases": [
+        "GRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:34d2f940031cabad8bb01bb5",
+      "label": "Concept",
+      "canonical_name": "graph construction",
+      "aliases": [
+        "graph construction"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:169841957ceb60a24ea3229d",
+      "label": "Concept",
+      "canonical_name": "graph foundation model",
+      "aliases": [
+        "graph foundation model"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:82c36c8e5840ae9c78c67b9a",
+      "label": "Concept",
+      "canonical_name": "graph pruning",
+      "aliases": [
+        "graph pruning"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7301ef7f2b89f746c04b0622",
+      "label": "Concept",
+      "canonical_name": "graph retrieval",
+      "aliases": [
+        "graph retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7d28976b2afbf1c5a3647582",
+      "label": "Concept",
+      "canonical_name": "graph topology",
+      "aliases": [
+        "graph topology"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:f7583a1cf0526481ff56391a",
+      "label": "Concept",
+      "canonical_name": "graph-based RAG",
+      "aliases": [
+        "graph-based RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7cf0945b0bbc6bc8e7bbfdd6",
+      "label": "Concept",
+      "canonical_name": "graph-based retrieval",
+      "aliases": [
+        "graph-based retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:e72f2f23da05a90ce2ea1616",
+      "label": "Concept",
+      "canonical_name": "GraphRAG",
+      "aliases": [
+        "GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:c8f7009be40fa6b13cfc17bf",
+      "label": "Concept",
+      "canonical_name": "GraphSearch",
+      "aliases": [
+        "GraphSearch"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:9b5d5aa5f9dee70090f62dfc",
+      "label": "Concept",
+      "canonical_name": "hallucination reduction",
+      "aliases": [
+        "hallucination reduction"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:bf5e0a3420c7b1d364faab4e",
+      "label": "Concept",
+      "canonical_name": "healthcare",
+      "aliases": [
+        "healthcare"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:d7894c0365b857db08c40476",
+      "label": "Concept",
+      "canonical_name": "HippoRAG",
+      "aliases": [
+        "HippoRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:5ed563198dd20e7329a97d7a",
+      "label": "Concept",
+      "canonical_name": "hybrid GraphRAG",
+      "aliases": [
+        "hybrid GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:61196cecd7ffd8ad336032f2",
+      "label": "Concept",
+      "canonical_name": "hybrid retrieval",
+      "aliases": [
+        "hybrid retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:ce79c0d87294e1b35ceb99a0",
+      "label": "Concept",
+      "canonical_name": "industrial maintenance",
+      "aliases": [
+        "industrial maintenance"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:bd3f119839996db9865c6947",
+      "label": "Concept",
+      "canonical_name": "inference-time scaling",
+      "aliases": [
+        "inference-time scaling"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:4bf18b9ef43f360c1de1cfcf",
+      "label": "Concept",
+      "canonical_name": "KAG",
+      "aliases": [
+        "KAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:d0fc01f62960f1b7273cc429",
+      "label": "Concept",
+      "canonical_name": "KET-RAG",
+      "aliases": [
+        "KET-RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:3f144b8f9935625b2598d6e5",
+      "label": "Concept",
+      "canonical_name": "knowledge filtering",
+      "aliases": [
+        "knowledge filtering"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:347d584f3910aa5af452b38c",
+      "label": "Concept",
+      "canonical_name": "knowledge graph-guided RAG",
+      "aliases": [
+        "knowledge graph-guided RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:6c910e1c052aed982729d0a9",
+      "label": "Concept",
+      "canonical_name": "knowledge graphs",
+      "aliases": [
+        "knowledge graphs"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7231546c8e8125bec5cdc000",
+      "label": "Concept",
+      "canonical_name": "knowledge integration",
+      "aliases": [
+        "knowledge integration"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:b8d1e41207c78f0034d4494f",
+      "label": "Concept",
+      "canonical_name": "Knowledge-Augmented Generation",
+      "aliases": [
+        "Knowledge-Augmented Generation"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:8aa5a71a3354bfd9cd08defd",
+      "label": "Concept",
+      "canonical_name": "language understanding",
+      "aliases": [
+        "language understanding"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:e54f5e4e15c237bc4cbab004",
+      "label": "Concept",
+      "canonical_name": "large-scale corpora",
+      "aliases": [
+        "large-scale corpora"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:073ad9802b0e5cb1c71d4c8a",
+      "label": "Concept",
+      "canonical_name": "LightRAG",
+      "aliases": [
+        "LightRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:b8f4d226ff92dec2fa74e9f9",
+      "label": "Concept",
+      "canonical_name": "LinearRAG",
+      "aliases": [
+        "LinearRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:cb9f1c2892957a950f41d08e",
+      "label": "Concept",
+      "canonical_name": "logic forms",
+      "aliases": [
+        "logic forms"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:e7b0e7b4234fb9fdb63fc3f3",
+      "label": "Concept",
+      "canonical_name": "long-term memory",
+      "aliases": [
+        "long-term memory"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:78143c6c550171d91d7601c6",
+      "label": "Concept",
+      "canonical_name": "medical RAG",
+      "aliases": [
+        "medical RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:5edea11eece929edf4c5271f",
+      "label": "Concept",
+      "canonical_name": "multi-granular indexing",
+      "aliases": [
+        "multi-granular indexing"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:123f36d33249a7a876632385",
+      "label": "Concept",
+      "canonical_name": "multi-hop question answering",
+      "aliases": [
+        "multi-hop question answering"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:1ae97b59f059db0e329713c8",
+      "label": "Concept",
+      "canonical_name": "multi-hop reasoning",
+      "aliases": [
+        "multi-hop reasoning"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:d3202e50e8cf96cf81e62ef1",
+      "label": "Concept",
+      "canonical_name": "multi-hop retrieval",
+      "aliases": [
+        "multi-hop retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:f6c23403ed90ad4e18085486",
+      "label": "Concept",
+      "canonical_name": "multimodal RAG",
+      "aliases": [
+        "multimodal RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:bcf31161a89850816207bd59",
+      "label": "Concept",
+      "canonical_name": "PathRAG",
+      "aliases": [
+        "PathRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:77e4e0b11996d88421e8fb1e",
+      "label": "Concept",
+      "canonical_name": "personalized PageRank",
+      "aliases": [
+        "personalized PageRank"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:7d31c033a99155599c6b940f",
+      "label": "Concept",
+      "canonical_name": "Portuguese NLP",
+      "aliases": [
+        "Portuguese NLP"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:58ae02c356c71c7254a18e43",
+      "label": "Concept",
+      "canonical_name": "professional domains",
+      "aliases": [
+        "professional domains"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:2909323cda61d5197932b6e4",
+      "label": "Concept",
+      "canonical_name": "query-focused summarization",
+      "aliases": [
+        "query-focused summarization"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:9a2bdf318913f89bd5f4cdb4",
+      "label": "Concept",
+      "canonical_name": "question answering",
+      "aliases": [
+        "question answering"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:07e89c041d3fe03aaa88b039",
+      "label": "Concept",
+      "canonical_name": "RAG",
+      "aliases": [
+        "RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:5af6ac5e4857fe9c5c787ea5",
+      "label": "Concept",
+      "canonical_name": "RAG comparison",
+      "aliases": [
+        "RAG comparison"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:fccfc4f6a0e0fb74698caac5",
+      "label": "Concept",
+      "canonical_name": "relational paths",
+      "aliases": [
+        "relational paths"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:f8dfc199cd2a714bbc83f60b",
+      "label": "Concept",
+      "canonical_name": "research question answering",
+      "aliases": [
+        "research question answering"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:d338fbbf1dbc484b3635069b",
+      "label": "Concept",
+      "canonical_name": "retrieval",
+      "aliases": [
+        "retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:832e15f054eb4bf5c1d9628a",
+      "label": "Concept",
+      "canonical_name": "retrieval-augmented generation",
+      "aliases": [
+        "retrieval-augmented generation"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:ae6f910a565d08ec3c22ce12",
+      "label": "Concept",
+      "canonical_name": "scalable retrieval",
+      "aliases": [
+        "scalable retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:a00643337c6daf0557fcf6e9",
+      "label": "Concept",
+      "canonical_name": "scientific literature",
+      "aliases": [
+        "scientific literature"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:b9a6dddbcad2c5864c3acce5",
+      "label": "Concept",
+      "canonical_name": "subgraph retrieval",
+      "aliases": [
+        "subgraph retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:aa11b17410ce83be13a033e1",
+      "label": "Concept",
+      "canonical_name": "survey",
+      "aliases": [
+        "survey"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:bb34c4a374ee1959dcb91e66",
+      "label": "Concept",
+      "canonical_name": "textual graphs",
+      "aliases": [
+        "textual graphs"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:060cd922e7508a8da36d456f",
+      "label": "Concept",
+      "canonical_name": "Think-on-Graph",
+      "aliases": [
+        "Think-on-Graph"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:30a9a3bc5b03ae9131d495be",
+      "label": "Concept",
+      "canonical_name": "vector retrieval",
+      "aliases": [
+        "vector retrieval"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:f5a94791bcc19fa69dd732d1",
+      "label": "Concept",
+      "canonical_name": "vector search",
+      "aliases": [
+        "vector search"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "concept:a976e9be36577cff716cf0d0",
+      "label": "Concept",
+      "canonical_name": "Youtu-GraphRAG",
+      "aliases": [
+        "Youtu-GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "dataset:0360dedf72014446b7508a1a",
+      "label": "Dataset",
+      "canonical_name": "2WikiMultiHopQA",
+      "aliases": [
+        "2WikiMultiHopQA",
+        "2wikimultihopqa",
+        "2wiki multihopqa",
+        "2wiki"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:34f17f5720beb1a1fbfdb04a",
+      "label": "Dataset",
+      "canonical_name": "CLUTRR",
+      "aliases": [
+        "CLUTRR",
+        "clutrr"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:81d4b005ee1d6810cc3e4207",
+      "label": "Dataset",
+      "canonical_name": "ComplexWebQuestions",
+      "aliases": [
+        "ComplexWebQuestions",
+        "complexwebquestions",
+        "cwq"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:6e7312bc619b15b000b2f502",
+      "label": "Dataset",
+      "canonical_name": "CPDD",
+      "aliases": [
+        "CPDD"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "dataset:9fb26dc36b25c661213c5e70",
+      "label": "Dataset",
+      "canonical_name": "CRAG",
+      "aliases": [
+        "CRAG",
+        "crag benchmark"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:3edcc3912e3a234980d27426",
+      "label": "Dataset",
+      "canonical_name": "DDXPlus",
+      "aliases": [
+        "DDXPlus"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "dataset:3ea7fbda561112a9d887485b",
+      "label": "Dataset",
+      "canonical_name": "FactKG",
+      "aliases": [
+        "FactKG",
+        "factkg"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:67333940bd9c6a0b6512cb6a",
+      "label": "Dataset",
+      "canonical_name": "GraphQA",
+      "aliases": [
+        "GraphQA"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "dataset:863852ab5137a141005c1a1a",
+      "label": "Dataset",
+      "canonical_name": "GRBench",
+      "aliases": [
+        "GRBench"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "dataset:7ba6b52a9de2d5bd3b86e440",
+      "label": "Dataset",
+      "canonical_name": "HotpotQA",
+      "aliases": [
+        "HotpotQA",
+        "hotpotqa"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:0110f9d60468fbdd57a9d806",
+      "label": "Dataset",
+      "canonical_name": "MedQA",
+      "aliases": [
+        "MedQA",
+        "medqa"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:0f7a9034437137d7c039a9ee",
+      "label": "Dataset",
+      "canonical_name": "MetaQA",
+      "aliases": [
+        "MetaQA",
+        "metaqa"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:fd0143d2a5cb252fc0f125eb",
+      "label": "Dataset",
+      "canonical_name": "MuSiQue",
+      "aliases": [
+        "MuSiQue",
+        "musique"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:4d0c8502d7d55d2463c8d6aa",
+      "label": "Dataset",
+      "canonical_name": "Natural Questions",
+      "aliases": [
+        "Natural Questions",
+        "natural questions"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:2f4cef859ed718ca209b3c3c",
+      "label": "Dataset",
+      "canonical_name": "PubMedQA",
+      "aliases": [
+        "PubMedQA",
+        "pubmedqa"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:96c179ed76bf58c1e5f144e7",
+      "label": "Dataset",
+      "canonical_name": "TriviaQA",
+      "aliases": [
+        "TriviaQA",
+        "triviaqa"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:d56c48b9e51f1e76bd929cdf",
+      "label": "Dataset",
+      "canonical_name": "WebQSP",
+      "aliases": [
+        "WebQSP",
+        "webqsp",
+        "webquestionssp"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "dataset:163a80b50a87cc1c3acd70e0",
+      "label": "Dataset",
+      "canonical_name": "WikiMovies",
+      "aliases": [
+        "WikiMovies",
+        "wikimovies"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:554df59ccc6a383805310990",
+      "label": "Method",
+      "canonical_name": "Agentic RAG",
+      "aliases": [
+        "Agentic RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:3b07a0876294993039cde7d8",
+      "label": "Method",
+      "canonical_name": "CG-RAG",
+      "aliases": [
+        "CG-RAG",
+        "cg-rag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:7e619373138f4ba3e6c726e8",
+      "label": "Method",
+      "canonical_name": "Classical RAG",
+      "aliases": [
+        "Classical RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:7b01c7f884a6959a9eb5f4c8",
+      "label": "Method",
+      "canonical_name": "Cross-encoder reranking",
+      "aliases": [
+        "Cross-encoder reranking",
+        "cross-encoder re-ranking",
+        "cross encoder reranking"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:5f08fbf8e12839a62040e439",
+      "label": "Method",
+      "canonical_name": "DynaGRAG",
+      "aliases": [
+        "DynaGRAG",
+        "dynagrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:179af59f22fd95fedde13c92",
+      "label": "Method",
+      "canonical_name": "E²GraphRAG",
+      "aliases": [
+        "E²GraphRAG",
+        "e²graphrag",
+        "e^2graphrag",
+        "e2graphrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:6d217cbff05d1de675aae52f",
+      "label": "Method",
+      "canonical_name": "G-Retriever",
+      "aliases": [
+        "G-Retriever",
+        "g-retriever"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:94aa18aa3e6e9379bbc09c17",
+      "label": "Method",
+      "canonical_name": "GFM-RAG",
+      "aliases": [
+        "GFM-RAG",
+        "gfm-rag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:be60e874be623f94d506b347",
+      "label": "Method",
+      "canonical_name": "GRAG",
+      "aliases": [
+        "GRAG",
+        "grag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:47f37f33a28a0be8882d10b6",
+      "label": "Method",
+      "canonical_name": "GraphRAG",
+      "aliases": [
+        "GraphRAG",
+        "graphrag",
+        "graph rag",
+        "graph-rag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:af63c31af53268107cdcbd7b",
+      "label": "Method",
+      "canonical_name": "GraphRAG-FI",
+      "aliases": [
+        "GraphRAG-FI"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:2d00bd58dd89944124702100",
+      "label": "Method",
+      "canonical_name": "GraphSearch",
+      "aliases": [
+        "GraphSearch",
+        "graphsearch"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:a4d89d01797c6d74dc010c83",
+      "label": "Method",
+      "canonical_name": "HippoRAG",
+      "aliases": [
+        "HippoRAG",
+        "hipporag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:971204c83bf61ddd0b91a369",
+      "label": "Method",
+      "canonical_name": "Hybrid GraphRAG",
+      "aliases": [
+        "Hybrid GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:c95608005039160a38d55a45",
+      "label": "Method",
+      "canonical_name": "Inference-Scaled GraphRAG",
+      "aliases": [
+        "Inference-Scaled GraphRAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:8462f92ced97a0f2c956c23d",
+      "label": "Method",
+      "canonical_name": "IRCoT",
+      "aliases": [
+        "IRCoT"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:463871be2cab33c28b8e8c40",
+      "label": "Method",
+      "canonical_name": "KAG",
+      "aliases": [
+        "KAG",
+        "knowledge augmented generation",
+        "knowledge-augmented generation"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:1985e89b24d0d38905b5a771",
+      "label": "Method",
+      "canonical_name": "KET-RAG",
+      "aliases": [
+        "KET-RAG",
+        "ket-rag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:f2f0ad8da65531f542fff227",
+      "label": "Method",
+      "canonical_name": "KG²RAG",
+      "aliases": [
+        "KG²RAG",
+        "KG$^2$RAG"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:b86e43a08bf71a0978dac528",
+      "label": "Method",
+      "canonical_name": "Leiden community detection",
+      "aliases": [
+        "Leiden community detection"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:4302160f31d74fc69552d541",
+      "label": "Method",
+      "canonical_name": "LeSeGR",
+      "aliases": [
+        "LeSeGR"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:50b6d41b4a5c83eefe7ddc41",
+      "label": "Method",
+      "canonical_name": "LightRAG",
+      "aliases": [
+        "LightRAG",
+        "lightrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:6d196beb41d82287cc7a6111",
+      "label": "Method",
+      "canonical_name": "LinearRAG",
+      "aliases": [
+        "LinearRAG",
+        "linearrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:487319842f41fabca2af44a3",
+      "label": "Method",
+      "canonical_name": "MedRAG",
+      "aliases": [
+        "MedRAG",
+        "medrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:c0c73dd9eeb9d344e150b85e",
+      "label": "Method",
+      "canonical_name": "Microsoft GraphRAG",
+      "aliases": [
+        "Microsoft GraphRAG",
+        "Microsoft's Graph-RAG",
+        "Microsoft’s Graph-RAG"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:c92f2eb930afd0ac9442bb23",
+      "label": "Method",
+      "canonical_name": "Modular RAG",
+      "aliases": [
+        "Modular RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:a1081f787ab7abfc7ec30f09",
+      "label": "Method",
+      "canonical_name": "Multimodal RAG",
+      "aliases": [
+        "Multimodal RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:fb6ec3eb12b56deed3ef569a",
+      "label": "Method",
+      "canonical_name": "paraphrase-multilingual-MiniLM-L12-v2",
+      "aliases": [
+        "paraphrase-multilingual-MiniLM-L12-v2"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:00c55a6aad979054a46a30cb",
+      "label": "Method",
+      "canonical_name": "PathRAG",
+      "aliases": [
+        "PathRAG",
+        "pathrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:ced2008e8ec7266116b266a8",
+      "label": "Method",
+      "canonical_name": "RAG",
+      "aliases": [
+        "RAG"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:d8e1206ad38880ffb08759b3",
+      "label": "Method",
+      "canonical_name": "Reciprocal Rank Fusion",
+      "aliases": [
+        "Reciprocal Rank Fusion"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:53a22d8d67509917eb120421",
+      "label": "Method",
+      "canonical_name": "text-embedding-3-small",
+      "aliases": [
+        "text-embedding-3-small"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:967b7f4556c813e5ad9ad649",
+      "label": "Method",
+      "canonical_name": "Think-on-Graph",
+      "aliases": [
+        "Think-on-Graph",
+        "think-on-graph"
+      ],
+      "identity_origin": "reviewed_seed"
+    },
+    {
+      "entity_id": "method:f0ec1a7cb3f980b9c2686bee",
+      "label": "Method",
+      "canonical_name": "Think-on-Graph 2.0",
+      "aliases": [
+        "Think-on-Graph 2.0"
+      ],
+      "identity_origin": "observed_exact_name"
+    },
+    {
+      "entity_id": "method:84c8f809da9951f703ee198a",
+      "label": "Method",
+      "canonical_name": "Youtu-GraphRAG",
+      "aliases": [
+        "Youtu-GraphRAG",
+        "youtu-graphrag"
+      ],
+      "identity_origin": "reviewed_seed"
+    }
+  ]
+}

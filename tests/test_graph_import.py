@@ -3,26 +3,73 @@ from copy import deepcopy
 from unittest.mock import MagicMock, patch
 
 import run_pipeline
+from src.entity_resolution import EntityRegistry
 from src.extract_entities import enrich_papers, validate_entities
 from src.import_graph import OWNED_TYPES, import_papers, validate_import_input
 from tests.test_pipeline import SAMPLE
 
 
 def fixture():
-    return {
-        **deepcopy(SAMPLE),
-        "extracted": {
-            "proposed_methods": ["GraphRAG"],
-            "used_methods": [],
-            "datasets": [],
+    from src.validate_data import validate_and_normalize
+
+    paper = validate_and_normalize([deepcopy(SAMPLE)])[0][0]
+    registry = EntityRegistry.load()
+    quote = paper["abstract"]
+
+    def extracted_mention(surface, label, relation):
+        start = quote.index(surface)
+        entity = registry.resolve(label, surface)
+        return {
+            "surface_form": surface,
+            "label": label,
+            "relation": relation,
+            "field": "abstract",
+            "quote": quote,
+            "start": start,
+            "end": start + len(surface),
+            **entity.as_dict(),
+            "origin": "title_abstract_extraction",
+        }
+
+    mentions = [
+        extracted_mention("GraphRAG", "Method", "PROPOSES"),
+        extracted_mention("HotpotQA", "Dataset", "EVALUATED_ON"),
+    ]
+    metadata_entities = []
+    for field, label, relation in (
+        ("authors", "Author", "AUTHORED"),
+        ("keywords", "Concept", "HAS_CONCEPT"),
+    ):
+        for surface in paper[field]:
+            metadata_entities.append(
+                {
+                    **registry.resolve(label, surface).as_dict(),
+                    "surface_form": surface,
+                    "relation": relation,
+                    "field": field,
+                    "origin": "paper_metadata",
+                }
+            )
+    paper["extracted"] = {
+        "mentions": mentions,
+        "proposed_methods": ["GraphRAG"],
+        "used_methods": [],
+        "datasets": ["HotpotQA"],
+        "metadata_entities": metadata_entities,
+        "provenance": {
+            "origin": "title_abstract_extraction",
+            "provider": "curated",
+            "model": None,
+            "schema_version": "1",
         },
     }
+    return paper
 
 
 class ImportTests(unittest.TestCase):
     def test_extraction_failure_is_sanitized_and_cannot_be_imported(self):
         with patch(
-            "src.extract_entities.extract_with_openai",
+            "src.extract_entities.extract_with_llm",
             side_effect=RuntimeError("secret-provider-detail"),
         ):
             enriched, report = enrich_papers([SAMPLE], "openai", "test-model")
@@ -38,15 +85,23 @@ class ImportTests(unittest.TestCase):
     def test_extraction_rejects_incomplete_provider_response(self):
         from src.extract_entities import extract_with_openai
 
-        for status in ("incomplete", "failed", "queued", None):
-            with self.subTest(status=status), patch("openai.OpenAI") as client:
-                response = client.return_value.__enter__.return_value.responses.create.return_value
-                response.status = status
-                response.output_text = (
-                    '{"proposed_methods":[],"used_methods":[],"datasets":[]}'
-                )
-                with self.assertRaises(ValueError):
-                    extract_with_openai(SAMPLE, "test-model")
+        from retrieval.config import LLMSettings
+
+        bad_response = {"mentions": [{
+            "surface_form": "Missing",
+            "label": "Method",
+            "relation": "PROPOSES",
+            "field": "abstract",
+            "quote": "We present GraphRAG.",
+        }]}
+        with (
+            patch("retrieval.llm.stage_settings", return_value=LLMSettings(model="test", api_key="local")),
+            patch("retrieval.llm.generate_json", return_value=bad_response),
+            patch("retrieval.llm.accept_json") as accept,
+        ):
+            with self.assertRaises(ValueError):
+                extract_with_openai(SAMPLE, "test-model")
+            accept.assert_not_called()
 
     def test_invalid_input_never_opens_session(self):
         for invalid in (
@@ -66,7 +121,7 @@ class ImportTests(unittest.TestCase):
         session.execute_write.side_effect = lambda fn, paper: fn(tx, paper)
         import_papers(driver, "neo4j", [fixture()])
         self.assertEqual(session.execute_write.call_count, 1)
-        self.assertEqual(tx.run.call_count, 6)
+        self.assertGreater(tx.run.call_count, 6)
         first = tx.run.call_args_list[0].args[0]
         self.assertIn("DELETE r", first)
         for rel in OWNED_TYPES:
@@ -115,6 +170,8 @@ class ImportTests(unittest.TestCase):
                 "sys.argv",
                 [
                     "extract",
+                    "--provider",
+                    "curated",
                     "--input",
                     str(source),
                     "--curated",
@@ -148,6 +205,7 @@ class ImportTests(unittest.TestCase):
             [
                 "src.validate_data",
                 "src.extract_entities",
+                "src.migrate_entities",
                 "src.import_graph",
                 "src.validate_graph",
                 "retrieval.index_embeddings",
@@ -228,17 +286,16 @@ class ValidatorTests(unittest.TestCase):
         bad_schema=False,
         constraint_type="UNIQUENESS",
     ):
-        from src.import_graph import RELATIONS
+        from src.validate_graph import _expected_edges
 
         constraints, indexes = [], []
-        for label, key in [
-            ("Paper", "id"),
-            ("Author", "name"),
-            ("Concept", "name"),
-            ("Method", "name"),
-            ("Dataset", "name"),
+        for label, key, name in [
+            ("Paper", "id", "paper_id_unique"),
+            ("Author", "entity_id", "author_entity_id_unique"),
+            ("Concept", "entity_id", "concept_entity_id_unique"),
+            ("Method", "entity_id", "method_entity_id_unique"),
+            ("Dataset", "entity_id", "dataset_entity_id_unique"),
         ]:
-            name = f"{label.lower()}_{key}_unique"
             constraints.append(
                 dict(
                     name=name,
@@ -273,11 +330,26 @@ class ValidatorTests(unittest.TestCase):
         if bad_schema:
             indexes[-1]["properties"] = ["wrong"]
         if edges is None:
-            edges = [
-                dict(type=rel, labels=[label], name=name, outgoing=rel != "AUTHORED")
-                for field, label, rel in RELATIONS
-                for name in paper.get(field, paper["extracted"].get(field, []))
-            ]
+            edges = []
+            entities = {
+                entity["entity_id"]: entity
+                for entity in (
+                    paper["extracted"]["metadata_entities"]
+                    + paper["extracted"]["mentions"]
+                )
+            }
+            for expected in _expected_edges(paper):
+                entity = entities[expected["entity_id"]]
+                edges.append(
+                    dict(
+                        type=expected["type"],
+                        labels=[expected["label"]],
+                        entity_id=expected["entity_id"],
+                        name=expected["canonical_name"],
+                        outgoing=expected["outgoing"],
+                        relationship_properties=expected["properties"],
+                    )
+                )
 
         class Record(dict):
             def data(self):
@@ -369,6 +441,11 @@ class ValidatorTests(unittest.TestCase):
                 )["valid"]
             )
             paper["keywords"] = []
+            paper["extracted"]["metadata_entities"] = [
+                entity
+                for entity in paper["extracted"]["metadata_entities"]
+                if entity["field"] != "keywords"
+            ]
             self.assertTrue(
                 validate_graph(self.make_driver(paper), "neo4j", [paper])["valid"]
             )

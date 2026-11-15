@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from neo4j import GraphDatabase
 
+from src.entity_resolution import EntityRegistry, resolve_metadata_entities
 from src.import_graph import _write_paper, import_papers
 from tests.test_graph_import import fixture
 from retrieval.hybrid import PATHS_QUERY, connect_sources
@@ -34,10 +35,53 @@ class GraphIntegrationTests(unittest.TestCase):
             authors=[self.token + "author"],
             keywords=[self.token + "concept"],
         )
+        self.paper["abstract"] = (
+            f"We present {self.token}method and evaluate it on {self.token}dataset."
+        )
+        self._set_extraction(
+            [
+                (self.token + "method", "Method", "PROPOSES"),
+                (self.token + "dataset", "Dataset", "EVALUATED_ON"),
+            ]
+        )
+
+    def _set_extraction(self, relation_mentions):
+        registry = EntityRegistry.load()
+        quote = self.paper["abstract"]
+        mentions = []
+        for surface, label, relation in relation_mentions:
+            start = quote.index(surface)
+            mentions.append(
+                {
+                    "surface_form": surface,
+                    "label": label,
+                    "relation": relation,
+                    "field": "abstract",
+                    "quote": quote,
+                    "start": start,
+                    "end": start + len(surface),
+                    **registry.resolve(label, surface).as_dict(),
+                    "origin": "title_abstract_extraction",
+                }
+            )
+        fields = {"proposed_methods": [], "used_methods": [], "datasets": []}
+        for mention in mentions:
+            field = {
+                "PROPOSES": "proposed_methods",
+                "USES_METHOD": "used_methods",
+                "EVALUATED_ON": "datasets",
+            }[mention["relation"]]
+            fields[field].append(mention["canonical_name"])
         self.paper["extracted"] = {
-            "proposed_methods": [self.token + "method"],
-            "used_methods": [self.token + "baseline"],
-            "datasets": [self.token + "dataset"],
+            **fields,
+            "mentions": mentions,
+            "provenance": {
+                "origin": "title_abstract_extraction",
+                "provider": "heuristic",
+                "model": None,
+                "schema_version": "1",
+            },
+            "metadata_entities": resolve_metadata_entities(self.paper, registry),
         }
 
     def tearDown(self):
@@ -133,11 +177,10 @@ class GraphIntegrationTests(unittest.TestCase):
         changed["title"] = "Changed"
         changed["authors"] = [self.token + "new-author"]
         changed["keywords"] = []
-        changed["extracted"] = {
-            "proposed_methods": [],
-            "used_methods": [self.token + "method"],
-            "datasets": [],
-        }
+        changed["abstract"] = f"We use {self.token}method as a baseline."
+        self.paper = changed
+        self._set_extraction([(self.token + "method", "Method", "USES_METHOD")])
+        changed = deepcopy(self.paper)
         import_papers(self.driver, self.database, [changed])
         import_papers(self.driver, self.database, [changed])
         with self.driver.session(database=self.database) as s:

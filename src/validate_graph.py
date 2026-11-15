@@ -1,4 +1,4 @@
-"""Confere o corpus importado e o schema contra o snapshot esperado."""
+"""Check graph contents, schema constraints, provenance and vector index."""
 
 from __future__ import annotations
 
@@ -12,12 +12,51 @@ from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
 from .common import read_json, write_json
-from .import_graph import (
-    OWNED_EDGE_PREDICATE,
-    OWNED_TYPES,
-    RELATIONS,
-    validate_import_input,
-)
+from .entity_resolution import entity_id_for
+from .import_graph import OWNED_EDGE_PREDICATE, OWNED_TYPES, validate_import_input
+
+
+ENTITY_CONSTRAINTS = {
+    "Paper": ("paper_id_unique", "id"),
+    "Author": ("author_entity_id_unique", "entity_id"),
+    "Concept": ("concept_entity_id_unique", "entity_id"),
+    "Method": ("method_entity_id_unique", "entity_id"),
+    "Dataset": ("dataset_entity_id_unique", "entity_id"),
+}
+
+
+def _expected_edges(paper: dict[str, Any]) -> list[dict[str, Any]]:
+    expected: list[dict[str, Any]] = []
+    for entity in paper["extracted"]["metadata_entities"]:
+        expected.append(
+            {
+                "type": entity["relation"],
+                "label": entity["label"],
+                "entity_id": entity["entity_id"],
+                "canonical_name": entity["canonical_name"],
+                "outgoing": entity["label"] != "Author",
+                "properties": {"origin": "paper_metadata", "field": entity["field"]},
+            }
+        )
+    for mention in paper["extracted"]["mentions"]:
+        expected.append(
+            {
+                "type": mention["relation"],
+                "label": mention["label"],
+                "entity_id": mention["entity_id"],
+                "canonical_name": mention["canonical_name"],
+                "outgoing": True,
+                "properties": {
+                    "origin": "title_abstract_extraction",
+                    "field": mention["field"],
+                    "quote": mention["quote"],
+                    "start": mention["start"],
+                    "end": mention["end"],
+                    "surface_form": mention["surface_form"],
+                },
+            }
+        )
+    return expected
 
 
 def validate_graph(
@@ -26,27 +65,21 @@ def validate_graph(
     papers = validate_import_input(papers)
     errors = []
     with driver.session(database=database) as session:
-        constraints = {r["name"]: r.data() for r in session.run("SHOW CONSTRAINTS")}
-        indexes = {r["name"]: r.data() for r in session.run("SHOW INDEXES")}
-        for label, key in [
-            ("Paper", "id"),
-            ("Author", "name"),
-            ("Concept", "name"),
-            ("Method", "name"),
-            ("Dataset", "name"),
-        ]:
-            name = f"{label.lower()}_{key}_unique"
-            c = constraints.get(name, {})
+        constraints = {row["name"]: row.data() for row in session.run("SHOW CONSTRAINTS")}
+        indexes = {row["name"]: row.data() for row in session.run("SHOW INDEXES")}
+        for label, (name, key) in ENTITY_CONSTRAINTS.items():
+            constraint = constraints.get(name, {})
             if (
-                c.get("type") not in {"UNIQUENESS", "NODE_PROPERTY_UNIQUENESS"}
-                or c.get("entityType") != "NODE"
-                or c.get("labelsOrTypes") != [label]
-                or c.get("properties") != [key]
+                constraint.get("type") not in {"UNIQUENESS", "NODE_PROPERTY_UNIQUENESS"}
+                or constraint.get("entityType") != "NODE"
+                or constraint.get("labelsOrTypes") != [label]
+                or constraint.get("properties") != [key]
             ):
-                errors.append(f"Constraint incompatível: {name}")
-            backing = indexes.get(c.get("ownedIndex"), {})
+                errors.append(f"Incompatible constraint: {name}")
+            backing = indexes.get(constraint.get("ownedIndex"), {})
             if backing.get("state") != "ONLINE":
-                errors.append(f"Índice da constraint indisponível: {name}")
+                errors.append(f"Constraint index unavailable: {name}")
+
         for name, kind, labels, properties in [
             ("paper_year_range", "RANGE", ["Paper"], ["year"]),
             ("paper_fulltext", "FULLTEXT", ["Paper"], ["title", "abstract"]),
@@ -65,7 +98,8 @@ def validate_graph(
                 or set(index.get("properties", [])) != set(properties)
                 or index.get("entityType") != "NODE"
             ):
-                errors.append(f"Índice incompatível: {name}")
+                errors.append(f"Incompatible index: {name}")
+
         from retrieval.config import RetrievalError
         from retrieval.embeddings import check_index
 
@@ -74,9 +108,8 @@ def validate_graph(
         except RetrievalError as exc:
             errors.append(str(exc))
         except Exception as exc:
-            errors.append(
-                f"Conferência do índice vetorial falhou ({type(exc).__name__})."
-            )
+            errors.append(f"Vector index check failed ({type(exc).__name__}).")
+
         for paper in papers:
             rows = list(
                 session.run(
@@ -86,72 +119,68 @@ def validate_graph(
             )
             if len(rows) != 1:
                 errors.append(
-                    f"{paper['id']}: esperado exatamente um Paper; encontrado {len(rows)}"
+                    f"{paper['id']}: expected one Paper, found {len(rows)}"
                 )
                 continue
             props = rows[0]["properties"]
             for key in ("id", "title", "abstract", "year", "source", "url"):
                 if props.get(key) != paper[key]:
-                    errors.append(f"{paper['id']}: propriedade divergente: {key}")
+                    errors.append(f"{paper['id']}: property differs: {key}")
+
             actual = list(
                 session.run(
-                    """MATCH (p:Paper {id:$id})-[r]- (n)
-                WHERE """
+                    """MATCH (p:Paper {id:$id})-[r]-(n)
+                    WHERE """
                     + OWNED_EDGE_PREDICATE
-                    + """
-                RETURN type(r) AS type, labels(n) AS labels, n.name AS name,
-                       startNode(r) = p AS outgoing""",
+                    + """RETURN type(r) AS type, labels(n) AS labels,
+                       n.entity_id AS entity_id, n.name AS name,
+                       startNode(r) = p AS outgoing,
+                       properties(r) AS relationship_properties""",
                     id=paper["id"],
-                    types=list(OWNED_TYPES),
                 )
             )
-            expected = []
-            for field, label, rel in RELATIONS:
-                for name in paper.get(field, paper["extracted"].get(field, [])):
-                    expected.append((rel, label, name, rel != "AUTHORED"))
+            expected = _expected_edges(paper)
             remaining = list(expected)
             for edge in actual:
                 matches = [
                     item
                     for item in remaining
-                    if item[0] == edge["type"]
-                    and item[1] in edge["labels"]
-                    and item[2] == edge["name"]
-                    and item[3] == edge["outgoing"]
+                    if item["type"] == edge["type"]
+                    and item["label"] in edge["labels"]
+                    and item["entity_id"] == edge.get("entity_id")
+                    and item["canonical_name"] == edge.get("name")
+                    and item["outgoing"] == edge.get("outgoing")
+                    and all(
+                        (edge.get("relationship_properties") or {}).get(key) == value
+                        for key, value in item["properties"].items()
+                    )
                 ]
                 if matches:
                     remaining.remove(matches[0])
                 else:
-                    errors.append(f"{paper['id']}: relação inesperada: {dict(edge)}")
+                    errors.append(f"{paper['id']}: unexpected relationship: {dict(edge)}")
             if remaining:
-                errors.append(f"{paper['id']}: relações ausentes: {remaining}")
+                errors.append(f"{paper['id']}: missing relationships: {remaining}")
+
             if check_embeddings:
-                from retrieval.embeddings import (
-                    EMBEDDING_MODEL,
-                    content_hash,
-                    validate_vector,
-                )
+                from retrieval.embeddings import EMBEDDING_MODEL, content_hash, validate_vector
 
                 try:
                     validate_vector(props.get("embedding"))
                     if props.get("embedding_model") != EMBEDDING_MODEL or props.get(
                         "embedding_hash"
                     ) != content_hash(paper):
-                        raise ValueError("modelo/hash divergente")
+                        raise ValueError("model/hash mismatch")
                 except (RetrievalError, ValueError) as exc:
-                    errors.append(f"{paper['id']}: embedding inválido: {exc}")
+                    errors.append(f"{paper['id']}: invalid embedding: {exc}")
     return {"valid": not errors, "papers_checked": len(papers), "errors": errors}
 
 
 def main() -> None:
     load_dotenv()
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--input", type=Path, default=Path("output/papers_enriched.json")
-    )
-    parser.add_argument(
-        "--report", type=Path, default=Path("output/graph_validation_report.json")
-    )
+    parser.add_argument("--input", type=Path, default=Path("output/papers_enriched.json"))
+    parser.add_argument("--report", type=Path, default=Path("output/graph_validation_report.json"))
     parser.add_argument("--check-embeddings", action="store_true")
     args = parser.parse_args()
     driver = None
@@ -171,7 +200,7 @@ def main() -> None:
     except Exception as exc:
         report = {
             "valid": False,
-            "errors": [f"Validação não concluída ({type(exc).__name__})."],
+            "errors": [f"Graph validation did not complete ({type(exc).__name__})."],
         }
     finally:
         if driver is not None:
