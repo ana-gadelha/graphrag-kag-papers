@@ -14,6 +14,25 @@ from .config import RetrievalError
 from .cypher_guard import RELATIONSHIPS
 
 ABSTENTION = "Não encontrei evidências suficientes nos artigos recuperados para responder a essa pergunta."
+_SUPERSCRIPT_TWO = re.compile(r"(?:²|\$\^(?:2|\{2\})\$)")
+
+
+def _quote_span(original: str, quote: str) -> tuple[int, int] | None:
+    """Locate literal evidence, recovering only unambiguous superscript spelling."""
+    start = original.find(quote)
+    if start >= 0:
+        return start, start + len(quote)
+
+    parts = _SUPERSCRIPT_TWO.split(quote)
+    if len(parts) == 1:
+        return None
+    # Models may render KG$^2$RAG as KG²RAG. Keep every other character exact,
+    # and recover source offsets rather than publishing the model's spelling.
+    pattern = _SUPERSCRIPT_TWO.pattern.join(re.escape(part) for part in parts)
+    matches = list(re.finditer(pattern, original))
+    if len(matches) != 1:
+        return None
+    return matches[0].span()
 
 
 def _strings(value: Any, *, pattern: str) -> list[str]:
@@ -187,19 +206,20 @@ def validate_claims(payload: Any, evidence: dict) -> dict:
                     "Trecho deve identificar fonte, campo textual e citação literal."
                 )
             original = sources[citation].get(field)
-            if not isinstance(original, str) or text not in original:
+            span = _quote_span(original, text) if isinstance(original, str) else None
+            if span is None:
                 raise RetrievalError(
                     "Trecho de evidência não existe no título/abstract da fonte citada."
                 )
             covered.add(citation)
-            start = original.index(text)
+            start, end = span
             normalized_quotes.append(
                 {
                     "source_id": citation,
                     "field": field,
-                    "quote": text,
+                    "quote": original[start:end],
                     "start": start,
-                    "end": start + len(text),
+                    "end": end,
                 }
             )
         if claim["kind"] == "document" and covered != set(source_ids):

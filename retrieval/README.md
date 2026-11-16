@@ -115,6 +115,15 @@ a abstenção não exige LLM. A confiança não é probabilidade de acerto: cont
 considerando apenas fontes citadas e convergência vetor/grafo, com canais que
 compartilham sementes. RRF é relevância por fonte, não confiança factual.
 
+Nas citações, uma recuperação local restrita reconhece as grafias equivalentes
+`²`, `$^2$` e `$^{2}$`, como no nome KG²RAG. A correspondência literal tem
+precedência. Se ela falhar, todos os outros caracteres devem permanecer iguais
+e deve existir um único trecho equivalente na mesma fonte e no mesmo campo.
+O resultado guarda o trecho original e seus offsets, não a grafia alterada pelo
+modelo. Não há comparação aproximada, aceitação de paráfrases ou nova chamada
+ao LLM para esse reparo. Outras alterações e correspondências ambíguas continuam
+sendo rejeitadas.
+
 ## Cache, orçamento e reprodução
 
 `retrieval.llm` compartilha transporte e tratamento de erros entre as etapas.

@@ -190,6 +190,32 @@ class AnswerTests(unittest.TestCase):
         self.assertNotIn("queries", prompt)
         self.assertNotIn("confidence", prompt)
 
+    def test_answer_recovers_literal_superscript_quote_without_another_llm_call(self) -> None:
+        data = deepcopy(EVIDENCE)
+        literal_quote = "We evaluate KG$^2$RAG on HotpotQA."
+        data["sources"][0]["abstract"] = "Prefix. " + literal_quote
+        self.retrieve.return_value = data
+        payload = {
+            "abstained": False,
+            "claims": [{
+                "kind": "document", "text": "O trabalho usa HotpotQA.",
+                "source_ids": ["S1"], "path_ids": [],
+                "quotes": [{"source_id": "S1", "field": "abstract",
+                            "quote": "We evaluate KG²RAG on HotpotQA."}],
+            }],
+        }
+        client = FakeOpenAI(json.dumps(payload), raw=True)
+        self.openai_client.return_value = client
+
+        result = answer_question("Quais trabalhos usam HotpotQA?")
+
+        self.assertFalse(result["abstained"])
+        quote = result["claims"][0]["quotes"][0]
+        self.assertEqual(quote["quote"], literal_quote)
+        self.assertEqual(quote["start"], len("Prefix. "))
+        self.assertEqual(quote["end"], len("Prefix. ") + len(literal_quote))
+        client.responses.create.assert_called_once()
+
     def test_no_evidence_abstains_without_api_key_or_llm_call(self) -> None:
         self.settings = Settings(
             uri="bolt://localhost:7687",

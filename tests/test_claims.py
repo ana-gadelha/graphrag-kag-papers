@@ -82,6 +82,79 @@ class ClaimsTests(unittest.TestCase):
             ):
                 validate_claims(payload, evidence())
 
+    def test_superscript_quotes_restore_source_spelling_and_offsets(self):
+        for field in ("title", "abstract"):
+            for source_form in ("²", "$^2$", "$^{2}$"):
+                for model_form in ("²", "$^2$", "$^{2}$"):
+                    with self.subTest(field=field, source=source_form, model=model_form):
+                        data = evidence()
+                        original_quote = f"We evaluate KG{source_form}RAG on HotpotQA."
+                        source = f"Prefix. {original_quote} Suffix."
+                        data["sources"][0][field] = source
+                        payload = document()
+                        supplied = payload["claims"][0]["quotes"][0]
+                        supplied.update(
+                            field=field,
+                            quote=f"We evaluate KG{model_form}RAG on HotpotQA.",
+                        )
+                        result = validate_claims(payload, data)
+                        actual = result["claims"][0]["quotes"][0]
+                        self.assertEqual(actual["quote"], original_quote)
+                        self.assertEqual(actual["start"], len("Prefix. "))
+                        self.assertEqual(actual["end"], len("Prefix. ") + len(original_quote))
+                        self.assertEqual(source[actual["start"]:actual["end"]], actual["quote"])
+                        self.assertEqual(supplied["quote"], f"We evaluate KG{model_form}RAG on HotpotQA.")
+
+    def test_superscript_recovery_preserves_all_other_characters(self):
+        data = evidence()
+        data["sources"][0]["abstract"] = "We evaluate KG$^2$RAG on HotpotQA."
+        for quote in (
+            "We evaluate KG²RAG on MuSiQue.",
+            "We evaluate KG²RAG on hotpotqa.",
+            "We evaluate KG²RAG on HotpotQA!",
+            "We do not evaluate KG²RAG on HotpotQA.",
+            "We evaluate KG³RAG on HotpotQA.",
+            "We evaluate KG2RAG on HotpotQA.",
+            "We evaluate KG^2RAG on HotpotQA.",
+        ):
+            payload = document()
+            payload["claims"][0]["quotes"][0]["quote"] = quote
+            with self.subTest(quote=quote), self.assertRaises(RetrievalError):
+                validate_claims(payload, data)
+
+    def test_superscript_recovery_rejects_ambiguous_source_spans(self):
+        data = evidence()
+        data["sources"][0]["abstract"] = (
+            "We evaluate KG$^2$RAG on HotpotQA. "
+            "We evaluate KG$^{2}$RAG on HotpotQA."
+        )
+        payload = document()
+        payload["claims"][0]["quotes"][0]["quote"] = "We evaluate KG²RAG on HotpotQA."
+        with self.assertRaises(RetrievalError):
+            validate_claims(payload, data)
+
+    def test_exact_quote_takes_precedence_over_superscript_recovery(self):
+        data = evidence()
+        prefix = "We evaluate KG$^2$RAG on HotpotQA. "
+        quote = "We evaluate KG²RAG on HotpotQA."
+        data["sources"][0]["abstract"] = prefix + quote
+        payload = document()
+        payload["claims"][0]["quotes"][0]["quote"] = quote
+        actual = validate_claims(payload, data)["claims"][0]["quotes"][0]
+        self.assertEqual(actual["quote"], quote)
+        self.assertEqual(actual["start"], len(prefix))
+
+    def test_superscript_recovery_cannot_borrow_evidence_from_another_source(self):
+        data = evidence()
+        data["sources"].append({
+            "citation_id": "S2", "paper_id": "b",
+            "abstract": "We evaluate KG$^2$RAG on HotpotQA.",
+        })
+        payload = document()
+        payload["claims"][0]["quotes"][0]["quote"] = "We evaluate KG²RAG on HotpotQA."
+        with self.assertRaises(RetrievalError):
+            validate_claims(payload, data)
+
     def test_graph_claim_is_rendered_from_verified_relations(self):
         data = evidence()
         payload = {
